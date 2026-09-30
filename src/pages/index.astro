@@ -1,0 +1,243 @@
+---
+import { supabase } from '../lib/supabase';
+import '../styles/global.css';
+
+// Fetch all venues from Supabase
+const { data: venues, error } = await supabase
+  .from('venues')
+  .select('*')
+  .order('created_at', { ascending: false });
+
+if (error) {
+  console.error('Error fetching venues:', error);
+}
+
+const venueList = venues || [];
+const fallbackImage = 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80';
+
+// Collect distinct regions for filter dropdown
+const regions = [...new Set(venueList.map((v) => v.region).filter(Boolean))];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rustic Weddings Ontario | Curated Barn, Farm & Country Venues</title>
+    <meta
+      name="description"
+      content="Find the best rustic, barn, farm, and outdoor wedding venues across Ontario."
+    />
+  </head>
+  <body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col font-sans">
+    <!-- Header -->
+    <header class="border-b border-stone-200 bg-white sticky top-0 z-40">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="/" class="text-xl font-serif font-bold text-stone-900 tracking-tight flex items-center gap-2">
+          <span>🌿</span> Rustic Weddings Ontario
+        </a>
+        <nav class="flex items-center gap-6 text-sm font-medium text-stone-600">
+          <a href="#venues" class="hover:text-stone-900 transition">Venues</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-stone-900 text-white py-20 px-4">
+      <div class="max-w-4xl mx-auto text-center space-y-4">
+        <h1 class="text-4xl md:text-6xl font-serif font-bold tracking-tight">
+          Find Your Dream Rustic Venue in Ontario
+        </h1>
+        <p class="text-lg md:text-xl text-stone-300 max-w-2xl mx-auto">
+          Explore the finest barns, historic estates, greenhouses, and countryside settings.
+        </p>
+
+        <!-- Search & Filter Controls -->
+        <div class="mt-8 bg-white p-4 rounded-2xl shadow-xl max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3 text-left text-stone-800">
+          <div>
+            <label class="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">Search</label>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Venue name or town..."
+              class="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">Region</label>
+            <select
+              id="region-filter"
+              class="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+            >
+              <option value="">All Regions</option>
+              {regions.map((region) => (
+                <option value={region}>{region}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">Min Guests</label>
+            <select
+              id="capacity-filter"
+              class="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+            >
+              <option value="0">Any Capacity</option>
+              <option value="100">100+ Guests</option>
+              <option value="150">150+ Guests</option>
+              <option value="200">200+ Guests</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Venue Directory -->
+    <main id="venues" class="max-w-6xl mx-auto px-4 py-12 flex-1 w-full">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-stone-900">Featured Venues</h2>
+          <p id="venue-counter" class="text-sm text-stone-500 mt-1">
+            Showing {venueList.length} rustic venue{venueList.length === 1 ? '' : 's'}
+          </p>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {venueList.map((venue) => {
+          const cap = venue.capacity_max || venue.capacity || 0;
+          const name = venue.name || venue.title || 'Wedding Venue';
+          const region = venue.region || 'Ontario';
+          const city = venue.city || venue.location || '';
+          const img = (Array.isArray(venue.image_urls) && venue.image_urls[0]) || venue.image_url || fallbackImage;
+
+          return (
+            <div
+              class="venue-card-wrapper flex flex-col bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-md transition duration-200"
+              data-name={name.toLowerCase()}
+              data-region={region.toLowerCase()}
+              data-city={city.toLowerCase()}
+              data-capacity={cap}
+            >
+              <a href={`/venues/${venue.slug}`} class="block relative aspect-[16/10] overflow-hidden bg-stone-200">
+                <img
+                  src={img}
+                  alt={name}
+                  onerror={`this.onerror=null;this.src='${fallbackImage}';`}
+                  class="w-full h-full object-cover hover:scale-105 transition duration-300"
+                />
+                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-xs font-semibold px-2.5 py-1 rounded-full text-stone-800">
+                  {region}
+                </span>
+              </a>
+
+              <div class="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 class="font-serif text-xl font-bold text-stone-900 mb-1">
+                    <a href={`/venues/${venue.slug}`} class="hover:text-emerald-800 transition">
+                      {name}
+                    </a>
+                  </h3>
+                  <p class="text-xs text-stone-500 mb-3">
+                    {city ? `${city}, Ontario` : region}
+                  </p>
+                  <p class="text-xs text-stone-600 line-clamp-2 leading-relaxed">
+                    {venue.description || 'Explore scenic indoor and outdoor celebration spaces.'}
+                  </p>
+                </div>
+
+                <div class="pt-4 mt-4 border-t border-stone-100 flex items-center justify-between text-xs">
+                  <span class="font-medium text-stone-600">
+                    {cap > 0 ? `Up to ${cap} guests` : 'Capacity available on request'}
+                  </span>
+                  <a
+                    href={`/venues/${venue.slug}`}
+                    class="font-semibold text-emerald-800 hover:text-emerald-950 transition"
+                  >
+                    View Details →
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Empty state when no filters match -->
+      <div id="no-results" class="hidden text-center py-16 bg-white rounded-2xl border border-stone-200 p-8 mt-4">
+        <p class="text-lg font-semibold text-stone-700">No venues matched your criteria.</p>
+        <p class="text-sm text-stone-500 mt-1">Try clearing your filters or search terms.</p>
+        <button
+          id="reset-filters"
+          class="mt-4 px-4 py-2 bg-emerald-800 text-white rounded-lg text-sm font-medium hover:bg-emerald-900 transition"
+        >
+          Reset Filters
+        </button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-stone-200 bg-white py-8 text-center text-sm text-stone-500">
+      <p>© {new Date().getFullYear()} Rustic Weddings Ontario. All rights reserved.</p>
+    </footer>
+
+    <!-- Filter script -->
+    <script>
+      const searchInput = document.getElementById('search-input') as HTMLInputElement;
+      const regionFilter = document.getElementById('region-filter') as HTMLSelectElement;
+      const capacityFilter = document.getElementById('capacity-filter') as HTMLSelectElement;
+      const cards = document.querySelectorAll('.venue-card-wrapper');
+      const counter = document.getElementById('venue-counter');
+      const noResults = document.getElementById('no-results');
+      const resetBtn = document.getElementById('reset-filters');
+
+      function filterVenues() {
+        const query = (searchInput?.value || '').toLowerCase().trim();
+        const selectedRegion = (regionFilter?.value || '').toLowerCase().trim();
+        const minCapacity = parseInt(capacityFilter?.value || '0', 10);
+
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const el = card as HTMLElement;
+          const name = el.dataset.name || '';
+          const region = el.dataset.region || '';
+          const city = el.dataset.city || '';
+          const cap = parseInt(el.dataset.capacity || '0', 10);
+
+          const matchesQuery = !query || name.includes(query) || city.includes(query) || region.includes(query);
+          const matchesRegion = !selectedRegion || region === selectedRegion;
+          const matchesCapacity = cap === 0 || cap >= minCapacity;
+
+          if (matchesQuery && matchesRegion && matchesCapacity) {
+            el.style.display = '';
+            visibleCount++;
+          } else {
+            el.style.display = 'none';
+          }
+        });
+
+        if (counter) {
+          counter.textContent = `Showing ${visibleCount} rustic venue${visibleCount === 1 ? '' : 's'}`;
+        }
+
+        if (noResults) {
+          noResults.classList.toggle('hidden', visibleCount > 0);
+        }
+      }
+
+      searchInput?.addEventListener('input', filterVenues);
+      regionFilter?.addEventListener('change', filterVenues);
+      capacityFilter?.addEventListener('change', filterVenues);
+
+      resetBtn?.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        if (regionFilter) regionFilter.value = '';
+        if (capacityFilter) capacityFilter.value = '0';
+        filterVenues();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,545 @@
+---
+import { Resend } from 'resend';
+import { supabase } from '../../lib/supabase';
+import '../../styles/global.css';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+// Handle inquiry form submission
+let formSubmitted = false;
+let formError = '';
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const venueId = formData.get('venue_id')?.toString();
+    const venueName = formData.get('venue_name')?.toString();
+    const name = formData.get('name')?.toString()?.trim();
+    const email = formData.get('email')?.toString()?.trim();
+    const phone = formData.get('phone')?.toString()?.trim();
+    const eventDate = formData.get('event_date')?.toString() || null;
+    const guests = formData.get('guests')?.toString();
+    const message = formData.get('message')?.toString()?.trim();
+
+    if (!name || !email) {
+      formError = 'Please provide both your name and email address.';
+    } else {
+      // 1. Insert lead record into Supabase
+      const { error: insertError } = await supabase.from('leads').insert({
+        venue_id: venueId || null,
+        venue_name: venueName,
+        name,
+        email,
+        phone: phone || null,
+        event_date: eventDate || null,
+        estimated_guests: guests ? parseInt(guests, 10) : null,
+        message: message || null,
+      });
+
+      if (insertError) {
+        console.error('Supabase lead insertion error:', insertError);
+        formError = insertError.message;
+      } else {
+        // 2. Dispatch Emails via Resend
+        const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+        const targetEmail = import.meta.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_NOTIFICATION_EMAIL;
+
+        if (apiKey && targetEmail) {
+          try {
+            const resend = new Resend(apiKey);
+
+            // A. Admin notification email
+            await resend.emails.send({
+              from: 'Rustic Weddings Ontario <onboarding@resend.dev>',
+              to: targetEmail,
+              replyTo: email,
+              subject: `New Lead: ${venueName} - ${name}`,
+              html: `
+                <h2>New Wedding Venue Inquiry</h2>
+                <p><strong>Venue:</strong> ${venueName}</p>
+                <hr style="border:none;border-top:1px solid #e4e4e7;margin:16px 0;" />
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
+                <p><strong>Target Date:</strong> ${eventDate || 'Flexible / Unspecified'}</p>
+                <p><strong>Estimated Guests:</strong> ${guests || 'Unspecified'}</p>
+                <p><strong>Message / Notes:</strong></p>
+                <blockquote style="background:#f4f4f5;padding:12px 16px;border-left:4px solid #15803d;margin:0;font-style:italic;">
+                  ${message ? message.replace(/\n/g, '<br/>') : 'No additional message provided.'}
+                </blockquote>
+              `,
+            });
+
+            // B. Couple auto-responder confirmation
+            await resend.emails.send({
+              from: 'Rustic Weddings Ontario <onboarding@resend.dev>',
+              to: email,
+              subject: `Inquiry Confirmation: ${venueName}`,
+              html: `
+                <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#1c1917;">
+                  <h2 style="color:#065f46;margin-bottom:8px;">Thank You, ${name}!</h2>
+                  <p style="font-size:15px;line-height:1.5;">
+                    We received your availability inquiry for <strong>${venueName}</strong>.
+                  </p>
+                  <div style="background:#f5f5f4;padding:16px 20px;border-radius:12px;margin:20px 0;">
+                    <h3 style="margin-top:0;font-size:14px;text-transform:uppercase;letter-spacing:0.05em;color:#78716c;">Inquiry Details</h3>
+                    <p style="margin:4px 0;font-size:14px;"><strong>Venue:</strong> ${venueName}</p>
+                    <p style="margin:4px 0;font-size:14px;"><strong>Target Date:</strong> ${eventDate || 'Flexible'}</p>
+                    <p style="margin:4px 0;font-size:14px;"><strong>Estimated Guests:</strong> ${guests || 'Unspecified'}</p>
+                  </div>
+                  <p style="font-size:14px;color:#57534e;">
+                    The venue team will review your requested date and reach back out to you directly at this email address.
+                  </p>
+                  <hr style="border:none;border-top:1px solid #e7e5e4;margin:24px 0;" />
+                  <p style="font-size:12px;color:#a8a29e;">Rustic Weddings Ontario &bull; Curated Venues Across Ontario</p>
+                </div>
+              `,
+            });
+
+            console.log('Lead notification & couple confirmation emails dispatched.');
+          } catch (resendErr) {
+            console.error('Error invoking Resend client:', resendErr);
+          }
+        }
+
+        formSubmitted = true;
+      }
+    }
+  } catch (err: any) {
+    console.error('Form submission exception:', err);
+    formError = err?.message || 'Failed to submit inquiry.';
+  }
+}
+
+// Fetch current venue details
+const { data: venue } = await supabase
+  .from('venues')
+  .select('*')
+  .eq('slug', slug?.trim())
+  .maybeSingle();
+
+const fallbackImage = 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80';
+
+let galleryImages: string[] = [];
+if (Array.isArray(venue?.image_urls) && venue.image_urls.length > 0) {
+  galleryImages = venue.image_urls;
+} else if (venue?.image_url) {
+  galleryImages = [venue.image_url];
+} else {
+  galleryImages = [fallbackImage];
+}
+
+const displayImage = galleryImages[0];
+const displayName = venue?.name || venue?.title || 'Wedding Venue';
+const displayRegion = venue?.region || 'Ontario';
+const displayCity = venue?.city || venue?.location || '';
+const displayCapacity = venue?.capacity_max || venue?.capacity;
+const displayDescription = venue?.description || `Explore rustic wedding venue details for ${displayName} in Ontario.`;
+
+let amenities: string[] = [];
+if (Array.isArray(venue?.amenities)) {
+  amenities = venue.amenities;
+} else if (typeof venue?.amenities === 'string') {
+  try {
+    const parsed = JSON.parse(venue.amenities);
+    amenities = Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    amenities = venue.amenities.split(',').map((s: string) => s.trim()).filter(Boolean);
+  }
+}
+
+// Fetch 2 Related Venues
+const { data: relatedData } = await supabase
+  .from('venues')
+  .select('id, name, slug, region, city, image_urls, capacity_max')
+  .neq('slug', slug?.trim())
+  .order('created_at', { ascending: false })
+  .limit(2);
+
+const relatedVenues = relatedData || [];
+
+const pageTitle = `${displayName} | Rustic Weddings Ontario`;
+const pageUrl = new URL(Astro.url.pathname, Astro.site || 'https://rusticweddingsontario.ca').href;
+
+const schemaData = venue
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'EventVenue',
+      name: displayName,
+      description: displayDescription,
+      image: displayImage,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: displayCity || displayRegion,
+        addressRegion: 'ON',
+        addressCountry: 'CA',
+      },
+    }
+  : null;
+---
+
+{
+  !venue ? (
+    <html lang="en">
+      <head>
+        <title>Venue Not Found</title>
+      </head>
+      <body class="bg-stone-50 p-8 font-sans text-stone-900">
+        <div class="max-w-md mx-auto bg-white p-6 rounded-xl border border-stone-200 space-y-4">
+          <h1 class="text-xl font-bold text-red-600">Venue Not Found</h1>
+          <p class="text-sm text-stone-600">
+            No venue was found for slug: <code class="font-mono bg-stone-100 px-2 py-1 rounded text-red-700">{slug}</code>
+          </p>
+          <a href="/" class="text-emerald-700 text-sm font-medium underline block">← Back to Homepage</a>
+        </div>
+      </body>
+    </html>
+  ) : (
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{pageTitle}</title>
+        <meta name="description" content={displayDescription} />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={displayDescription} />
+        <meta property="og:image" content={displayImage} />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={displayDescription} />
+        <meta name="twitter:image" content={displayImage} />
+
+        <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+      </head>
+      <body class="bg-stone-50 text-stone-900 min-h-screen">
+        <header class="border-b border-stone-200 bg-white/80 backdrop-blur sticky top-0 z-40">
+          <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="/" class="text-xl font-serif font-bold text-stone-900 tracking-tight flex items-center gap-2">
+              <span>🌿</span> Rustic Weddings Ontario
+            </a>
+            <a href="/" class="text-sm font-medium text-stone-600 hover:text-stone-900 transition">
+              ← Back to all venues
+            </a>
+          </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-4 py-10">
+          <div class="mb-6">
+            <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 rounded-full mb-3">
+              {displayRegion}
+            </span>
+            <h1 class="text-4xl sm:text-5xl font-serif font-bold tracking-tight text-stone-900">
+              {displayName}
+            </h1>
+            <p class="text-stone-600 mt-2 text-lg">
+              {displayCity ? `${displayCity}, Ontario` : displayRegion}
+            </p>
+          </div>
+
+          <!-- Clickable Photo Gallery Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            <div class="md:col-span-2 rounded-2xl overflow-hidden shadow-sm border border-stone-200 aspect-[16/10] bg-stone-200 group cursor-pointer relative gallery-trigger">
+              <img
+                src={galleryImages[0]}
+                alt={`${displayName} Main View`}
+                onerror={`this.onerror=null;this.src='${fallbackImage}';`}
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+              />
+              <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
+                🔍 Click to enlarge
+              </span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-1 gap-4">
+              {galleryImages.slice(1, 3).map((imgUrl, idx) => (
+                <div class="rounded-2xl overflow-hidden shadow-sm border border-stone-200 aspect-[16/10] md:aspect-auto md:h-full bg-stone-200 group cursor-pointer relative gallery-trigger">
+                  <img
+                    src={imgUrl}
+                    alt={`${displayName} View ${idx + 2}`}
+                    onerror={`this.onerror=null;this.src='${fallbackImage}';`}
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  />
+                  <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition">
+                    🔍
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="md:col-span-2 space-y-8">
+              <!-- About -->
+              <section class="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm">
+                <h2 class="text-2xl font-serif font-bold mb-4">About this Venue</h2>
+                <p class="text-stone-700 leading-relaxed whitespace-pre-line">
+                  {displayDescription}
+                </p>
+              </section>
+
+              <!-- Amenities / Features -->
+              {amenities.length > 0 && (
+                <section class="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm">
+                  <h2 class="text-2xl font-serif font-bold mb-4">Key Amenities & Features</h2>
+                  <div class="flex flex-wrap gap-2">
+                    {amenities.map((item: string) => (
+                      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-100 text-stone-800 text-sm font-medium border border-stone-200">
+                        <span class="text-emerald-700 font-bold">✓</span> {item}
+                      </span>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="space-y-6">
+              <!-- Venue Details -->
+              <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <h3 class="text-lg font-bold font-serif">Venue Details</h3>
+                <dl class="space-y-3 text-sm">
+                  <div class="flex justify-between border-b border-stone-100 pb-2">
+                    <dt class="text-stone-500">Region</dt>
+                    <dd class="font-medium text-stone-900">{displayRegion}</dd>
+                  </div>
+                  {displayCity && (
+                    <div class="flex justify-between border-b border-stone-100 pb-2">
+                      <dt class="text-stone-500">City / Township</dt>
+                      <dd class="font-medium text-stone-900">{displayCity}</dd>
+                    </div>
+                  )}
+                  {displayCapacity && (
+                    <div class="flex justify-between border-b border-stone-100 pb-2">
+                      <dt class="text-stone-500">Capacity</dt>
+                      <dd class="font-medium text-stone-900">Up to {displayCapacity} guests</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+
+              <!-- Inquiry Form Card -->
+              <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4" id="inquire">
+                <h3 class="text-lg font-bold font-serif">Check Availability</h3>
+                <p class="text-xs text-stone-500">Send an inquiry directly for dates and pricing.</p>
+
+                {formSubmitted ? (
+                  <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-sm space-y-1">
+                    <p class="font-bold">Inquiry Sent!</p>
+                    <p class="text-xs">Your inquiry for {displayName} has been sent. A confirmation copy has been sent to your email.</p>
+                  </div>
+                ) : (
+                  <form method="POST" class="space-y-3">
+                    <input type="hidden" name="venue_id" value={venue.id} />
+                    <input type="hidden" name="venue_name" value={displayName} />
+
+                    {formError && (
+                      <p class="text-xs text-red-600 bg-red-50 p-2 rounded border border-red-200">{formError}</p>
+                    )}
+
+                    <div>
+                      <label for="name" class="block text-xs font-semibold text-stone-600 mb-1">Your Name *</label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        class="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                      />
+                    </div>
+
+                    <div>
+                      <label for="email" class="block text-xs font-semibold text-stone-600 mb-1">Email Address *</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        class="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                      />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                      <div>
+                        <label for="event_date" class="block text-xs font-semibold text-stone-600 mb-1">Target Date</label>
+                        <input
+                          type="date"
+                          id="event_date"
+                          name="event_date"
+                          class="w-full px-2 py-2 text-xs bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                        />
+                      </div>
+                      <div>
+                        <label for="guests" class="block text-xs font-semibold text-stone-600 mb-1">Guest Count</label>
+                        <input
+                          type="number"
+                          id="guests"
+                          name="guests"
+                          placeholder="e.g. 150"
+                          class="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label for="message" class="block text-xs font-semibold text-stone-600 mb-1">Message / Notes</label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows="3"
+                        placeholder="Tell them about your wedding plans..."
+                        class="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                      ></textarea>
+                    </div>
+
+                    <button
+                      type="submit"
+                      class="w-full py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-sm font-semibold rounded-lg transition shadow-sm cursor-pointer"
+                    >
+                      Send Inquiry
+                    </button>
+                  </form>
+                )}
+              </div>
+            </aside>
+          </div>
+
+          <!-- Related Venues Section -->
+          {relatedVenues.length > 0 && (
+            <section class="mt-16 pt-10 border-t border-stone-200">
+              <h2 class="text-2xl font-serif font-bold text-stone-900 mb-6">Explore Other Venues</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {relatedVenues.map((rel) => {
+                  const relImg = (Array.isArray(rel.image_urls) && rel.image_urls[0]) || fallbackImage;
+                  return (
+                    <a
+                      href={`/venues/${rel.slug}`}
+                      class="flex bg-white rounded-xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-md transition group"
+                    >
+                      <div class="w-1/3 aspect-[4/3] bg-stone-200 overflow-hidden">
+                        <img
+                          src={relImg}
+                          alt={rel.name}
+                          class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                        />
+                      </div>
+                      <div class="p-4 w-2/3 flex flex-col justify-between">
+                        <div>
+                          <span class="text-[10px] font-semibold uppercase text-emerald-800 tracking-wider">
+                            {rel.region}
+                          </span>
+                          <h4 class="font-serif font-bold text-stone-900 text-lg group-hover:text-emerald-800 transition">
+                            {rel.name}
+                          </h4>
+                          <p class="text-xs text-stone-500 mt-0.5">{rel.city || rel.region}</p>
+                        </div>
+                        <span class="text-xs font-semibold text-stone-700 mt-2">View Venue →</span>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+        </main>
+
+        <!-- Fullscreen Lightbox Modal -->
+        <div id="lightbox" class="fixed inset-0 z-50 bg-black/95 hidden items-center justify-center p-4 backdrop-blur-sm select-none">
+          <button id="lightbox-close" class="absolute top-5 right-5 text-white/80 hover:text-white text-3xl font-light focus:outline-none cursor-pointer z-50">
+            &times;
+          </button>
+          <button id="lightbox-prev" class="absolute left-4 md:left-8 text-white/80 hover:text-white text-4xl p-3 focus:outline-none cursor-pointer z-50">
+            &#10094;
+          </button>
+          <div class="max-w-5xl max-h-[85vh] flex flex-col items-center">
+            <img id="lightbox-image" src="" alt="Venue preview" class="max-h-[80vh] max-w-full object-contain rounded-lg shadow-2xl" />
+            <p id="lightbox-caption" class="text-stone-300 text-sm mt-3 tracking-wide"></p>
+          </div>
+          <button id="lightbox-next" class="absolute right-4 md:right-8 text-white/80 hover:text-white text-4xl p-3 focus:outline-none cursor-pointer z-50">
+            &#10095;
+          </button>
+        </div>
+
+        <script>
+          const modal = document.getElementById('lightbox');
+          const imgEl = document.getElementById('lightbox-image') as HTMLImageElement;
+          const captionEl = document.getElementById('lightbox-caption');
+          const closeBtn = document.getElementById('lightbox-close');
+          const prevBtn = document.getElementById('lightbox-prev');
+          const nextBtn = document.getElementById('lightbox-next');
+          const triggers = document.querySelectorAll('.gallery-trigger');
+
+          // Grab the actual rendered image URLs directly from the gallery cards
+          const images: string[] = [];
+          triggers.forEach((trigger) => {
+            const img = trigger.querySelector('img');
+            if (img && img.src) {
+              images.push(img.src);
+            }
+          });
+
+          let currentIndex = 0;
+
+          function showImage(index: number) {
+            if (!images.length) return;
+            currentIndex = (index + images.length) % images.length;
+            if (imgEl) {
+              imgEl.src = images[currentIndex];
+            }
+            if (captionEl) {
+              captionEl.textContent = `Photo ${currentIndex + 1} of ${images.length}`;
+            }
+          }
+
+          function openLightbox(index: number) {
+            showImage(index);
+            if (modal) {
+              modal.classList.remove('hidden');
+              modal.classList.add('flex');
+            }
+            document.body.style.overflow = 'hidden';
+          }
+
+          function closeLightbox() {
+            if (modal) {
+              modal.classList.add('hidden');
+              modal.classList.remove('flex');
+            }
+            document.body.style.overflow = '';
+          }
+
+          triggers.forEach((trigger, idx) => {
+            trigger.addEventListener('click', () => {
+              openLightbox(idx);
+            });
+          });
+
+          closeBtn?.addEventListener('click', closeLightbox);
+          prevBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showImage(currentIndex - 1);
+          });
+          nextBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showImage(currentIndex + 1);
+          });
+
+          modal?.addEventListener('click', (e) => {
+            if (e.target === modal) closeLightbox();
+          });
+
+          document.addEventListener('keydown', (e) => {
+            if (modal?.classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+            if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+          });
+        </script>
+      </body>
+    </html>
+  )
+}

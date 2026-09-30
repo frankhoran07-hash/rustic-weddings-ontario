@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+  --color-background: oklch(0.97 0.012 85);
+  --color-foreground: oklch(0.24 0.03 60);
+  --color-primary: oklch(0.32 0.06 150);
+  --color-primary-foreground: oklch(0.97 0.014 85);
+  --color-accent: oklch(0.72 0.12 75);
+  --color-accent-foreground: oklch(0.22 0.03 60);
+  --color-secondary: oklch(0.93 0.02 85);
+  --color-secondary-foreground: oklch(0.25 0.03 60);
+  --color-muted: oklch(0.94 0.015 85);
+  --color-muted-foreground: oklch(0.45 0.03 60);
+  --color-border: oklch(0.88 0.02 80);
+  --color-card: oklch(0.99 0.005 85);
+  --color-ring: oklch(0.32 0.06 150);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
