@@ -9,10 +9,8 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   output: 'server',
   adapter: cloudflare({
+    mode: 'directory',
     imageService: 'passthrough',
-    platformProxy: {
-      enabled: true,
-    },
   }),
   integrations: [react()],
   vite: {
