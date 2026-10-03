@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node -e \"const fs=require('fs'); fs.cpSync('dist/server', 'dist/client/_server', {recursive:true}); fs.writeFileSync('dist/client/_worker.js', 'import { pageMap } from \\'./_server/entry.mjs\\'; export default pageMap;\\n');\"",
+    "build": "astro build && node -e \"const fs=require('fs'); fs.cpSync('dist/server', 'dist/client/_server', {recursive:true}); fs.writeFileSync('dist/client/_worker.js', 'export { default } from \\'./_server/entry.mjs\\';\\n');\"",
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types"
