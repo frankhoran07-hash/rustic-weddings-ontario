@@ -22,7 +22,7 @@ if (supabaseUrl && supabaseKey) {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const { data, error } = await supabase
       .from('venues')
-      .select('id, name, slug, city, region, image_url, capacity, starting_price, latitude, longitude')
+      .select('*')
       .order('name', { ascending: true });
 
     if (!error && data) {
@@ -47,6 +47,7 @@ if (supabaseUrl && supabaseKey) {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   </head>
   <body style="margin: 0; padding: 0; background-color: #fafaf9;">
+    <!-- Top Nav -->
     <header style="height: 60px; background-color: #ffffff; border-bottom: 1px solid #e7e5e4; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-family: system-ui, sans-serif;">
       <a href="/" style="text-decoration: none; font-weight: 700; color: #1c1917; font-size: 16px;">
         🌿 Rustic Weddings Ontario
@@ -56,8 +57,10 @@ if (supabaseUrl && supabaseKey) {
       </a>
     </header>
 
+    <!-- Combined Explorer (Hero + Filters + Map + Cards) -->
     <VenueExplorer client:only="react" initialVenues={venues} />
 
+    <!-- Footer -->
     <footer style="margin-top: 60px; padding: 32px 20px; text-align: center; border-top: 1px solid #e7e5e4; font-size: 13px; color: #a8a29e; font-family: system-ui, sans-serif;">
       &copy; {new Date().getFullYear()} Rustic Weddings Ontario. All rights reserved.
     </footer>
