@@ -1,0 +1,1013 @@
+19:16:51 [@astrojs/node] Enabling sessions with filesystem storage
+19:16:51 [vite] connected.
+19:16:51 [types] Generated 2ms
+19:16:51 [vite] connected.
+ astro  v7.3.5 ready in 1301 ms
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+19:16:51 watching for file changes...
+19:16:53 [200] / 179ms
+19:16:53 [404] /images/hero.png 5ms
+19:16:53 [404] /images/hero.png 1ms
+19:17:06 [200] / 144ms
+19:17:21 [200] / 210ms
+19:17:21 [404] /images/hero.png 1ms
+19:17:21 [404] /images/hero.png 1ms
+21:08:27 [200] / 1031ms
+21:08:27 [404] /images/hero.png 2ms
+21:08:27 [404] /images/hero.png 1ms
+21:08:27 [404] /images/hero.png 1ms
+21:08:27 [404] /images/hero.png 0ms
+21:08:27 [404] /images/hero.png 0ms
+21:08:27 [404] /images/hero.png 1ms
+21:09:06 [200] / 251ms
+21:10:01 [404] /images/hero.png 8ms
+21:10:01 [404] /images/hero.png 1ms
+21:10:01 [404] /images/hero.png 1ms
+21:10:01 [404] /images/hero.png 1ms
+21:10:01 [404] /images/hero.png 1ms
+17:34:14 [WARN] [router] getStaticPaths() ignored in dynamic page /src/pages/venues/[slug].astro. Add `export const prerender = true;` to prerender the page as static HTML during the build process.
+17:34:14 [ERROR] TypeError: Cannot read properties of undefined (reading 'name')
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\venues\[slug].astro:25:1)
+    at [slug] (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+    at async DevFacadeApp.render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\app\base.js:262:18)
+17:34:14 [ERROR] Cannot read properties of undefined (reading 'name')
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\venues\[slug].astro:25:1)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+17:34:16 [404] /images/hero.png 1ms
+17:34:16 [404] /images/hero.png 0ms
+17:34:16 [404] /images/hero.png 0ms
+17:34:16 [404] /images/hero.png 0ms
+17:34:16 [404] /images/hero.png 0ms
+17:34:58 [404] /images/hero.png 10ms
+17:36:46 [WARN] [router] getStaticPaths() ignored in dynamic page /src/pages/venues/[slug].astro. Add `export const prerender = true;` to prerender the page as static HTML during the build process.
+17:36:47 [200] / 281ms
+17:36:47 [200] / 288ms
+17:36:47 [302] /venues/strathmere 1098ms
+17:36:47 [404] /images/hero.png 1ms
+17:36:47 [200] / 75ms
+17:36:47 [404] /images/hero.png 1ms
+17:36:47 [404] /images/hero.png 1ms
+17:36:47 [404] /images/hero.png 0ms
+17:36:47 [404] /images/hero.png 0ms
+17:36:47 [404] /images/hero.png 0ms
+17:36:47 [404] /images/hero.png 0ms
+17:36:47 [404] /images/hero.png 0ms
+17:36:48 [404] /images/hero.png 0ms
+17:36:48 [404] /images/hero.png 0ms
+17:36:48 [404] /images/hero.png 1ms
+17:36:48 [404] /images/hero.png 0ms
+17:36:48 [404] /images/hero.png 0ms
+17:36:48 [404] /images/hero.png 0ms
+17:37:01 [302] /venues/strathmere 156ms
+17:37:01 [200] / 107ms
+17:37:01 [404] /images/hero.png 0ms
+17:37:01 [404] /images/hero.png 0ms
+17:37:01 [404] /images/hero.png 0ms
+17:37:01 [404] /images/hero.png 0ms
+17:37:01 [404] /images/hero.png 0ms
+17:37:01 [404] /images/hero.png 0ms
+17:37:34 [302] /venues/strathmere 179ms
+17:37:35 [200] / 87ms
+17:37:35 [404] /images/hero.png 1ms
+17:37:35 [404] /images/hero.png 0ms
+17:37:35 [404] /images/hero.png 0ms
+17:37:35 [404] /images/hero.png 0ms
+17:37:35 [404] /images/hero.png 0ms
+17:37:35 [404] /images/hero.png 0ms
+17:39:26 [200] / 345ms
+17:39:26 [404] /images/hero.png 1ms
+17:39:26 [404] /images/hero.png 0ms
+17:39:26 [404] /images/hero.png 0ms
+17:39:26 [404] /images/hero.png 0ms
+17:39:26 [404] /images/hero.png 0ms
+17:39:26 [404] /images/hero.png 0ms
+17:41:05 [302] /venues/strathmere 297ms
+17:41:05 [200] / 134ms
+17:41:05 [404] /images/hero.png 0ms
+17:41:05 [404] /images/hero.png 0ms
+17:41:05 [404] /images/hero.png 0ms
+17:41:05 [404] /images/hero.png 0ms
+17:41:05 [404] /images/hero.png 0ms
+17:41:05 [404] /images/hero.png 0ms
+17:41:05 [404] /images/hero.png 0ms
+17:41:22 [302] /venues/strathmere 176ms
+17:41:22 [200] / 96ms
+17:41:22 [404] /images/hero.png 1ms
+17:41:22 [404] /images/hero.png 0ms
+17:41:22 [404] /images/hero.png 0ms
+17:41:22 [404] /images/hero.png 0ms
+17:41:22 [404] /images/hero.png 0ms
+17:41:22 [404] /images/hero.png 0ms
+17:43:51 [200] / 606ms
+17:43:51 [200] / 527ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [404] /images/hero.png 0ms
+17:43:51 [200] / 106ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [200] / 85ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [404] /images/hero.png 0ms
+17:43:51 [404] /images/hero.png 1ms
+17:43:51 [404] /images/hero.png 0ms
+17:43:51 [200] / 76ms
+17:43:51 [404] /images/hero.png 0ms
+17:43:51 [404] /images/hero.png 0ms
+17:43:51 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 1ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:52 [404] /images/hero.png 0ms
+17:43:55 [200] / 123ms
+17:43:55 [404] /images/hero.png 1ms
+17:43:55 [404] /images/hero.png 0ms
+17:43:55 [404] /images/hero.png 0ms
+17:43:55 [404] /images/hero.png 0ms
+17:43:55 [404] /images/hero.png 0ms
+17:43:55 [404] /images/hero.png 0ms
+17:43:55 [404] /images/hero.png 0ms
+17:44:12 [200] /venues/strathmere. 454ms
+17:44:17 [200] /venues/strathmere 353ms
+17:45:39 [302] /venues/strathmere 264ms
+17:45:39 [200] / 214ms
+17:45:39 [404] /images/hero.png 1ms
+17:45:39 [200] / 292ms
+17:45:39 [404] /images/hero.png 1ms
+17:45:39 [200] / 129ms
+17:45:39 [404] /images/hero.png 1ms
+17:45:39 [200] / 80ms
+17:45:39 [404] /images/hero.png 1ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [200] / 73ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 1ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:39 [404] /images/hero.png 0ms
+17:45:48 [302] /venues/strathmere 168ms
+17:45:48 [200] / 83ms
+17:45:48 [404] /images/hero.png 0ms
+17:45:49 [404] /images/hero.png 0ms
+17:45:49 [404] /images/hero.png 0ms
+17:45:49 [404] /images/hero.png 0ms
+17:45:49 [404] /images/hero.png 0ms
+17:45:49 [404] /images/hero.png 0ms
+17:45:55 [302] /venues/strathmere 160ms
+17:45:55 [200] / 75ms
+17:45:55 [404] /images/hero.png 0ms
+17:45:55 [404] /images/hero.png 0ms
+17:45:55 [404] /images/hero.png 0ms
+17:45:55 [404] /images/hero.png 0ms
+17:45:55 [404] /images/hero.png 0ms
+17:45:55 [404] /images/hero.png 0ms
+17:46:54 [200] / 232ms
+17:46:54 [404] /images/hero.png 1ms
+17:46:54 [404] /images/hero.png 0ms
+17:46:54 [404] /images/hero.png 0ms
+17:46:54 [404] /images/hero.png 0ms
+17:46:54 [404] /images/hero.png 0ms
+17:46:54 [404] /images/hero.png 0ms
+17:46:55 [200] / 89ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [200] / 82ms
+17:46:55 [200] / 187ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 1ms
+17:46:55 [200] / 96ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 1ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:55 [404] /images/hero.png 0ms
+17:46:57 [302] /venues/strathmere 69ms
+17:46:57 [200] / 69ms
+17:46:57 [404] /images/hero.png 1ms
+17:46:57 [404] /images/hero.png 0ms
+17:46:57 [404] /images/hero.png 0ms
+17:46:57 [404] /images/hero.png 0ms
+17:46:57 [404] /images/hero.png 0ms
+17:46:57 [404] /images/hero.png 0ms
+17:47:10 [302] /venues/strathmere 150ms
+17:47:10 [200] / 69ms
+17:47:10 [404] /images/hero.png 1ms
+17:47:10 [404] /images/hero.png 1ms
+17:47:10 [404] /images/hero.png 0ms
+17:47:10 [404] /images/hero.png 0ms
+17:47:10 [404] /images/hero.png 0ms
+17:47:10 [404] /images/hero.png 0ms
+17:47:39 [200] / 345ms
+17:47:39 [404] /images/hero.png 1ms
+17:47:40 [404] /images/hero.png 1ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [200] / 105ms
+17:47:40 [404] /images/hero.png 1ms
+17:47:40 [404] /images/hero.png 1ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 1ms
+17:47:40 [200] / 184ms
+17:47:40 [200] / 93ms
+17:47:40 [404] /images/hero.png 1ms
+17:47:40 [404] /images/hero.png 1ms
+17:47:40 [200] / 76ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:40 [404] /images/hero.png 0ms
+17:47:42 [200] /venues/strathmere 138ms
+17:48:19 [302] /venues/strathmere 203ms
+17:48:20 [200] / 179ms
+17:48:20 [200] / 191ms
+17:48:20 [404] /images/hero.png 1ms
+17:48:20 [404] /images/hero.png 1ms
+17:48:20 [200] / 84ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [200] / 81ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [200] / 71ms
+17:48:20 [404] /images/hero.png 1ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:20 [404] /images/hero.png 0ms
+17:48:23 [302] /venues/strathmere 63ms
+17:48:23 [200] / 72ms
+17:48:23 [404] /images/hero.png 0ms
+17:48:23 [404] /images/hero.png 0ms
+17:48:23 [404] /images/hero.png 0ms
+17:48:23 [404] /images/hero.png 0ms
+17:48:23 [404] /images/hero.png 0ms
+17:48:23 [404] /images/hero.png 0ms
+17:48:30 [302] /venues/strathmere 147ms
+17:48:30 [200] / 100ms
+17:48:30 [404] /images/hero.png 0ms
+17:48:30 [404] /images/hero.png 1ms
+17:48:30 [404] /images/hero.png 0ms
+17:48:30 [404] /images/hero.png 0ms
+17:48:30 [404] /images/hero.png 0ms
+17:48:30 [404] /images/hero.png 0ms
+17:48:30 [404] /images/hero.png 0ms
+17:48:47 [302] /venues/strathmere-north-gower 152ms
+17:48:48 [200] / 76ms
+17:48:48 [404] /images/hero.png 0ms
+17:48:48 [404] /images/hero.png 1ms
+17:48:48 [404] /images/hero.png 0ms
+17:48:48 [404] /images/hero.png 0ms
+17:48:48 [404] /images/hero.png 0ms
+17:48:48 [404] /images/hero.png 0ms
+17:50:28 [200] / 435ms
+17:50:28 [200] / 496ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 1ms
+17:50:28 [200] / 118ms
+17:50:28 [404] /images/hero.png 1ms
+17:50:28 [404] /images/hero.png 1ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [200] / 71ms
+17:50:28 [404] /images/hero.png 1ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [200] / 73ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:28 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 1ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:50:29 [404] /images/hero.png 0ms
+17:51:22 [ERROR] TypeError: Cannot read properties of null (reading 'name')
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\venues\[slug].astro:22:1)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:25)
+    at async renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:26)
+    at async renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:24)
+    at async handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:20)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+    at async DevFacadeApp.render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\app\base.js:262:18)
+17:51:22 [ERROR] Cannot read properties of null (reading 'name')
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\venues\[slug].astro:22:1)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+17:51:24 [404] /images/hero.png 1ms
+17:51:30 [404] /images/hero.png 1ms
+17:51:30 [404] /images/hero.png 1ms
+17:51:30 [404] /images/hero.png 0ms
+17:51:30 [404] /images/hero.png 0ms
+17:51:30 [404] /images/hero.png 0ms
+17:51:30 [404] /images/hero.png 0ms
+17:51:30 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+17:51:31 [404] /images/hero.png 0ms
+Fetching venue for slug: strathmere-north-gower Result: NOT FOUND
+17:52:45 [200] /venues/strathmere-north-gower 433ms
+17:52:45 [200] / 464ms
+17:52:45 [200] / 486ms
+17:52:45 [404] /images/hero.png 1ms
+17:52:45 [404] /images/hero.png 1ms
+17:52:45 [200] / 81ms
+17:52:45 [404] /images/hero.png 1ms
+17:52:45 [404] /images/hero.png 1ms
+17:52:45 [200] / 96ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:45 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:46 [404] /images/hero.png 0ms
+17:52:47 [404] /images/hero.png 6ms
+17:52:47 [404] /images/hero.png 0ms
+17:53:48 [200] /venues/strathmere-north-gower 211ms
+17:53:49 [200] / 131ms
+17:53:49 [404] /images/hero.png 1ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [200] / 88ms
+17:53:49 [200] / 229ms
+17:53:49 [404] /images/hero.png 1ms
+17:53:49 [404] /images/hero.png 1ms
+17:53:49 [200] / 84ms
+17:53:49 [404] /images/hero.png 1ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:49 [404] /images/hero.png 0ms
+17:53:57 [200] /venues/test 148ms
+17:54:09 [200] /venues/strathmere-north-gower 165ms
+17:54:14 [200] /venues/strathmere-north-gower 151ms
+17:54:14 [200] /venues/strathmere-north-gower 57ms
+17:54:14 [200] /venues/strathmere-north-gower 60ms
+17:54:14 [200] /venues/strathmere-north-gower 58ms
+17:54:14 [200] /venues/strathmere-north-gower 57ms
+17:54:15 [200] /venues/strathmere-north-gower 56ms
+17:54:15 [200] /venues/strathmere-north-gower 58ms
+17:54:22 [200] /venues/aquatopia-conservatory-carp 158ms
+17:54:23 [200] /venues/strathmere-north-gower 58ms
+17:54:25 [200] /venues/evermore-weddings-almonte 69ms
+17:54:26 [200] /venues/the-herb-garden-almonte 64ms
+17:54:26 [200] /venues/100-acre-wood-picton 59ms
+17:54:27 [200] /venues/strathmere-north-gower 75ms
+17:54:28 [200] /venues/strathmere-north-gower 65ms
+17:55:30 [200] /venues/strathmere-north-gower 306ms
+17:55:31 [200] / 101ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [200] / 81ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [200] / 226ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [200] / 82ms
+17:55:31 [404] /images/hero.png 1ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 1ms
+17:55:31 [404] /images/hero.png 1ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 1ms
+17:55:31 [404] /images/hero.png 1ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:31 [404] /images/hero.png 0ms
+17:55:43 [200] /venues/strathmere-north-gower 158ms
+17:55:43 [200] /venues/strathmere-north-gower 175ms
+17:56:34 [200] /venues/strathmere-north-gower 349ms
+17:56:35 [200] / 97ms
+17:56:35 [404] /images/hero.png 1ms
+17:56:35 [200] / 171ms
+17:56:35 [200] / 89ms
+17:56:35 [404] /images/hero.png 1ms
+17:56:35 [404] /images/hero.png 1ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [200] / 90ms
+17:56:35 [404] /images/hero.png 1ms
+17:56:35 [404] /images/hero.png 1ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:35 [404] /images/hero.png 0ms
+17:56:45 [200] /venues/strathmere-north-gower 153ms
+17:56:45 [200] /venues/strathmere-north-gower 168ms
+18:00:27 [200] / 425ms
+18:00:27 [404] /images/hero.png 1ms
+18:00:27 [404] /images/hero.png 0ms
+18:00:27 [404] /images/hero.png 1ms
+18:00:27 [404] /images/hero.png 0ms
+18:00:27 [404] /images/hero.png 0ms
+18:00:27 [404] /images/hero.png 0ms
+18:00:27 [404] /images/hero.png 1ms
+18:00:32 [200] /venues/strathmere-north-gower 204ms
+08:36:55 [watch] /src/styles/global.css
+08:36:57 [200] / 634ms
+08:36:57 [200] / 650ms
+08:36:57 [200] /venues/strathmere-north-gower 951ms
+08:36:57 [200] / 74ms
+08:36:57 [200] / 73ms
+08:36:57 [404] /images/hero.png 1ms
+08:36:57 [404] /images/hero.png 1ms
+08:36:57 [404] /images/hero.png 1ms
+08:36:57 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:36:58 [404] /images/hero.png 0ms
+08:37:18 [watch] /src/styles/global.css
+08:37:18 [302] /venues/strathmere-north-gower 231ms
+08:37:18 [200] / 155ms
+08:37:19 [200] / 166ms
+08:37:19 [404] /images/hero.png 1ms
+08:37:19 [404] /images/hero.png 1ms
+08:37:19 [200] / 67ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [200] / 65ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [200] / 65ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 1ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 1ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:19 [404] /images/hero.png 0ms
+08:37:31 [200] / 172ms
+08:37:31 [404] /images/hero.png 1ms
+08:37:31 [404] /images/hero.png 0ms
+08:37:31 [404] /images/hero.png 0ms
+08:37:31 [404] /images/hero.png 0ms
+08:37:31 [404] /images/hero.png 0ms
+08:37:31 [404] /images/hero.png 0ms
+08:37:41 [302] /venues/strathmere-north-gower 132ms
+08:37:41 [200] / 68ms
+08:37:41 [404] /images/hero.png 0ms
+08:37:41 [404] /images/hero.png 0ms
+08:37:41 [404] /images/hero.png 0ms
+08:37:41 [404] /images/hero.png 0ms
+08:37:41 [404] /images/hero.png 0ms
+08:37:41 [404] /images/hero.png 0ms
+08:38:24 [watch] /src/styles/global.css
+08:38:24 [200] / 177ms
+08:38:24 [404] /images/hero.png 1ms
+08:38:24 [404] /images/hero.png 0ms
+08:38:24 [404] /images/hero.png 0ms
+08:38:24 [404] /images/hero.png 0ms
+08:38:24 [404] /images/hero.png 0ms
+08:38:24 [404] /images/hero.png 0ms
+08:38:24 [200] / 80ms
+08:38:24 [404] /images/hero.png 0ms
+08:38:24 [404] /images/hero.png 0ms
+08:38:25 [200] / 195ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [200] / 62ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [200] / 89ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:25 [404] /images/hero.png 0ms
+08:38:40 [200] /venues/strathmere-north-gower 154ms
+08:42:34 [watch] /src/styles/global.css
+08:42:34 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:4:27
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:42:34 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:4:27
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:42:34 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:4:27
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:42:34 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:4:27
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:42:34 [200] /venues/strathmere-north-gower 628ms
+08:42:51 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:4:27
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:18 [watch] /src/styles/global.css
+08:43:18 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:4:27
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:18 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:18 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:18 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:18 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:18 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:21 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:22 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:22 [ERROR] Could not import `../components/VenueCard`.
+  Hint:
+    This is often caused by a typo in the import path. Please make sure the file exists.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/
+  Stack trace:
+    at loadAndTransform (file:///C:/Users/helic/rustic-weddings-ontario/node_modules/vite/dist/node/chunks/node.js:19987:31)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+08:43:56 [watch] /src/styles/global.css
+08:43:57 [200] / 253ms
+08:43:57 [200] / 255ms
+08:43:57 [200] / 257ms
+08:43:57 [200] / 258ms
+08:43:57 [200] / 258ms
+08:43:57 [200] / 287ms
+08:43:57 [200] / 258ms
+08:43:57 [200] / 291ms
+08:43:57 [200] / 64ms
+08:43:57 [200] / 51ms
+08:43:57 [200] / 53ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 1ms
+08:43:57 [404] /images/hero.png 1ms
+08:43:57 [404] /images/hero.png 1ms
+08:43:57 [404] /images/hero.png 1ms
+08:43:57 [404] /images/hero.png 1ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:43:57 [404] /images/hero.png 0ms
+08:44:47 [200] / 273ms
+08:44:47 [404] /images/hero.png 1ms
+08:44:47 [404] /images/hero.png 0ms
+08:46:09 [watch] /src/styles/global.css
+08:46:09 [200] / 202ms
+08:46:09 [200] / 150ms
+08:46:10 [200] / 169ms
+08:46:10 [200] / 77ms
+08:46:10 [200] / 81ms
+08:50:32 [200] /venues/strathmere-north-gower 682ms
+08:52:13 [watch] /src/styles/global.css
+08:52:14 [200] /venues/strathmere-north-gower 338ms
+08:52:15 [200] / 162ms
+08:52:15 [200] / 183ms
+08:52:15 [200] / 91ms
+08:52:15 [200] / 89ms
+08:52:16 [200] /venues/strathmere-north-gower 84ms
+08:54:01 [watch] /src/styles/global.css
+08:54:02 [200] / 229ms
+08:54:02 [200] / 231ms
+08:54:02 [200] /venues/strathmere-north-gower 283ms
+08:54:02 [200] / 77ms
+08:54:02 [200] / 66ms
+08:55:15 [200] POST /venues/strathmere-north-gower 566ms
+08:55:15 [200] POST /venues/strathmere-north-gower 235ms
+09:03:42 [watch] /src/styles/global.css
+09:03:43 [watch] /src/styles/global.css
+09:03:43 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+    at async DevFacadeApp.render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\app\base.js:262:18)
+09:03:43 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+    at async DevFacadeApp.render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\app\base.js:262:18)
+09:03:43 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:03:43 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:03:43 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+09:03:43 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:03:43 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+09:03:43 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:03:44 [200] POST /venues/strathmere-north-gower 1053ms
+09:05:35 [watch] /src/styles/global.css
+09:05:35 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+    at async DevFacadeApp.render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\app\base.js:262:18)
+09:05:35 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+    at async DevFacadeApp.render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\app\base.js:262:18)
+09:05:35 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:05:35 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:05:35 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+09:05:35 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:05:35 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+09:05:35 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:05:35 [ERROR] ReferenceError: filteredVenues is not defined
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    at index (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\astro-component.js:16:12)
+    at callComponentAsTemplateResultOrResponse (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:226:31)
+    at renderToAsyncIterable (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\astro\render.js:258:32)
+    at renderPage (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\runtime\server\render\page.js:43:30)
+    at handlePages (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\pages\handler.js:32:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async callMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\callMiddleware.js:11:10)
+    at async handleMiddleware (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\middleware\astro-middleware.js:40:16)
+    at async render (C:\Users\helic\rustic-weddings-ontario\node_modules\astro\dist\core\routing\handler.js:80:18)
+09:05:35 [ERROR] filteredVenues is not defined
+  Stack trace:
+    at eval (C:\Users\helic\rustic-weddings-ontario\src\pages\index.astro:1:2)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+09:05:36 [200] POST /venues/strathmere-north-gower 392ms
+09:05:36 [200] POST /venues/strathmere-north-gower 431ms
+09:06:12 [watch] /src/styles/global.css
+09:06:12 [200] / 193ms
+09:06:12 [200] / 198ms
+09:06:12 [200] / 61ms
+09:06:12 [200] POST /venues/strathmere-north-gower 271ms
+09:06:12 [200] / 74ms
+09:06:33 [200] / 158ms
+09:09:43 [200] / 668ms
+09:10:34 [200] / 231ms
+09:12:14 [watch] /src/styles/global.css
+09:12:15 [200] / 329ms
+09:12:15 [200] / 417ms
+09:12:15 [200] / 95ms
+09:12:15 [200] / 82ms
+09:12:15 [200] / 73ms
+09:12:35 [200] /venues/strathmere-north-gower 198ms
+09:14:33 Configuration file updated. Restarting...
+09:14:33 [@astrojs/node] Enabling sessions with filesystem storage
+09:14:33 [vite] program reload
+09:14:34 [vite] program reload
+09:14:34 [vite] connected.
+09:14:34 [vite] connected.
+09:14:34 [vite] Re-optimizing dependencies because lockfile has changed
+09:14:35 [vite] server restarted.
+09:14:35 [200] / 847ms
+09:14:35 [200] / 853ms
+09:14:35 [200] /venues/strathmere-north-gower 855ms
+09:14:35 [200] /venues/strathmere-north-gower 857ms
+09:14:36 [vite] [optimizer] bundling dependencies...
+09:14:40 [200] / 233ms
+09:14:40 [200] / 235ms
+09:14:41 [200] / 101ms
+09:14:41 [200] / 72ms
+09:17:45 [vite] .env changed, restarting server...
+09:17:45 [vite] connected.
+09:17:45 [vite] connected.
+09:17:45 [vite] server restarted.
+09:17:47 [200] / 443ms
+09:17:47 [200] / 444ms
+09:17:47 [200] / 90ms
+09:17:47 [200] / 72ms
