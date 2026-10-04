@@ -29,7 +29,9 @@ export default function VenueExplorer({ initialVenues = [] }) {
   const displayedVenues = useMemo(() => {
     let list = proximityVenues !== null ? proximityVenues : initialVenues;
     if (selectedRegion !== 'All Regions') {
-      list = list.filter((v) => (v.region || '').toLowerCase() === selectedRegion.toLowerCase());
+      list = list.filter((v) => 
+        (v.region || '').trim().toLowerCase() === selectedRegion.trim().toLowerCase()
+      );
     }
     return list;
   }, [proximityVenues, initialVenues, selectedRegion]);
@@ -114,6 +116,8 @@ export default function VenueExplorer({ initialVenues = [] }) {
 
     if (validPoints.length > 0) {
       mapInstance.current.fitBounds(validPoints, { padding: [40, 40], maxZoom: 10 });
+    } else {
+      mapInstance.current.setView([44.5, -79.5], 6);
     }
 
     setTimeout(() => {
@@ -121,12 +125,21 @@ export default function VenueExplorer({ initialVenues = [] }) {
     }, 200);
   };
 
-  // Town proximity search handler
-  const handleTownSearch = async (e) => {
-    e.preventDefault();
+  // Search handler (works with town proximity OR region-only search)
+  const handleSearch = async (e) => {
+    if (e) e.preventDefault();
+
+    // If town/city is blank, just filter by region
     if (!searchTerm.trim()) {
       setProximityVenues(null);
-      setStatusMessage('');
+      if (selectedRegion === 'All Regions') {
+        setStatusMessage(`Showing all ${initialVenues.length} venues.`);
+      } else {
+        const count = initialVenues.filter(
+          (v) => (v.region || '').trim().toLowerCase() === selectedRegion.trim().toLowerCase()
+        ).length;
+        setStatusMessage(`Showing ${count} venues in ${selectedRegion}.`);
+      }
       return;
     }
 
@@ -167,9 +180,24 @@ export default function VenueExplorer({ initialVenues = [] }) {
   };
 
   const handleRegionChange = (e) => {
-    setSelectedRegion(e.target.value);
-    setProximityVenues(null);
+    const newRegion = e.target.value;
+    setSelectedRegion(newRegion);
+    setProximityVenues(null); // Clear distance calculation to show all venues in that region
+    
+    if (newRegion === 'All Regions') {
+      setStatusMessage(`Showing all venues.`);
+    } else {
+      const count = initialVenues.filter(
+        (v) => (v.region || '').trim().toLowerCase() === newRegion.trim().toLowerCase()
+      ).length;
+      setStatusMessage(`Showing ${count} venue(s) in ${newRegion}.`);
+    }
+  };
+
+  const handleReset = () => {
     setSearchTerm('');
+    setSelectedRegion('All Regions');
+    setProximityVenues(null);
     setStatusMessage('');
   };
 
@@ -186,7 +214,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
 
         {/* Filter Controls Bar */}
         <form
-          onSubmit={handleTownSearch}
+          onSubmit={handleSearch}
           style={{
             maxWidth: '860px',
             margin: '0 auto',
@@ -204,7 +232,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search town (e.g. Almonte, Picton, Muskoka)"
+            placeholder="Search town or city (optional)"
             style={{
               flex: '2 1 200px',
               padding: '10px 14px',
@@ -275,6 +303,26 @@ export default function VenueExplorer({ initialVenues = [] }) {
           >
             {loading ? 'Searching...' : 'Search'}
           </button>
+
+          {(searchTerm || selectedRegion !== 'All Regions' || proximityVenues !== null) && (
+            <button
+              type="button"
+              onClick={handleReset}
+              style={{
+                padding: '10px 14px',
+                borderRadius: '8px',
+                backgroundColor: 'transparent',
+                color: '#78716c',
+                fontWeight: '600',
+                fontSize: '13px',
+                border: 'none',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+              }}
+            >
+              Reset
+            </button>
+          )}
         </form>
 
         {statusMessage && (
