@@ -12,7 +12,7 @@ export async function GET({ request }) {
   const supabaseKey = process.env.PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    return new Response(JSON.stringify({ error: 'Database environment variables not set' }), {
+    return new Response(JSON.stringify({ error: 'Database environment variables not configured' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

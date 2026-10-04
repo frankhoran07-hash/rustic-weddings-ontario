@@ -1,6 +1,6 @@
 globalThis.process ??= {};
 globalThis.process.env ??= {};
-import { i as manifest, n as App, r as DefaultFetchHandler } from "./chunks/entrypoints_DkehPA9_.mjs";
+import { i as manifest, n as App, r as DefaultFetchHandler } from "./chunks/entrypoints_BFnfcODj.mjs";
 import "./chunks/service_Dyi72H7_.mjs";
 import "./chunks/assets_DpF8CwcV.mjs";
 import "./chunks/_astro_assets_B-xYNgAS.mjs";
