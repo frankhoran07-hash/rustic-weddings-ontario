@@ -1,18 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 
-const REGIONS = [
-  'All Regions',
-  'Ottawa Valley',
-  'Muskoka',
-  'Simcoe County',
-  'Huron County',
-  'Oxford County',
-  'Northumberland',
-  'Kawarthas',
-  'Hamilton',
-  'Niagara'
-];
-
 export default function VenueExplorer({ initialVenues = [] }) {
   const [selectedRegion, setSelectedRegion] = useState('All Regions');
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,13 +12,26 @@ export default function VenueExplorer({ initialVenues = [] }) {
   const mapInstance = useRef(null);
   const markersGroup = useRef(null);
 
+  // Dynamically extract unique regions that actually exist in your database
+  const availableRegions = useMemo(() => {
+    const set = new Set();
+    initialVenues.forEach((v) => {
+      if (v.region && typeof v.region === 'string' && v.region.trim()) {
+        set.add(v.region.trim());
+      }
+    });
+    return ['All Regions', ...Array.from(set).sort()];
+  }, [initialVenues]);
+
   // Active venue list filtered by proximity search OR region dropdown
   const displayedVenues = useMemo(() => {
     let list = proximityVenues !== null ? proximityVenues : initialVenues;
     if (selectedRegion !== 'All Regions') {
-      list = list.filter((v) => 
-        (v.region || '').trim().toLowerCase() === selectedRegion.trim().toLowerCase()
-      );
+      const target = selectedRegion.trim().toLowerCase();
+      list = list.filter((v) => {
+        const r = (v.region || '').trim().toLowerCase();
+        return r === target || r.includes(target) || target.includes(r);
+      });
     }
     return list;
   }, [proximityVenues, initialVenues, selectedRegion]);
@@ -99,9 +99,11 @@ export default function VenueExplorer({ initialVenues = [] }) {
     const validPoints = [];
 
     list.forEach((v) => {
-      if (v.latitude && v.longitude) {
-        validPoints.push([v.latitude, v.longitude]);
-        const marker = L.marker([v.latitude, v.longitude]);
+      const lat = parseFloat(v.latitude);
+      const lng = parseFloat(v.longitude);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        validPoints.push([lat, lng]);
+        const marker = L.marker([lat, lng]);
         marker.bindPopup(`
           <div style="font-family: sans-serif; font-size: 13px; line-height: 1.4;">
             <strong style="color: #1c1917; font-size: 14px;">${v.name}</strong><br/>
@@ -135,10 +137,12 @@ export default function VenueExplorer({ initialVenues = [] }) {
       if (selectedRegion === 'All Regions') {
         setStatusMessage(`Showing all ${initialVenues.length} venues.`);
       } else {
-        const count = initialVenues.filter(
-          (v) => (v.region || '').trim().toLowerCase() === selectedRegion.trim().toLowerCase()
-        ).length;
-        setStatusMessage(`Showing ${count} venues in ${selectedRegion}.`);
+        const target = selectedRegion.trim().toLowerCase();
+        const count = initialVenues.filter((v) => {
+          const r = (v.region || '').trim().toLowerCase();
+          return r === target || r.includes(target) || target.includes(r);
+        }).length;
+        setStatusMessage(`Showing ${count} venue(s) in ${selectedRegion}.`);
       }
       return;
     }
@@ -182,14 +186,16 @@ export default function VenueExplorer({ initialVenues = [] }) {
   const handleRegionChange = (e) => {
     const newRegion = e.target.value;
     setSelectedRegion(newRegion);
-    setProximityVenues(null); // Clear distance calculation to show all venues in that region
+    setProximityVenues(null); // Clear distance restriction to show all venues in that region
     
     if (newRegion === 'All Regions') {
       setStatusMessage(`Showing all venues.`);
     } else {
-      const count = initialVenues.filter(
-        (v) => (v.region || '').trim().toLowerCase() === newRegion.trim().toLowerCase()
-      ).length;
+      const target = newRegion.trim().toLowerCase();
+      const count = initialVenues.filter((v) => {
+        const r = (v.region || '').trim().toLowerCase();
+        return r === target || r.includes(target) || target.includes(r);
+      }).length;
       setStatusMessage(`Showing ${count} venue(s) in ${newRegion}.`);
     }
   };
@@ -258,7 +264,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
               cursor: 'pointer',
             }}
           >
-            {REGIONS.map((r) => (
+            {availableRegions.map((r) => (
               <option key={r} value={r}>
                 {r}
               </option>
@@ -312,7 +318,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
                 padding: '10px 14px',
                 borderRadius: '8px',
                 backgroundColor: 'transparent',
-                color: '#78716c',
+                color: '#78350f',
                 fontWeight: '600',
                 fontSize: '13px',
                 border: 'none',
@@ -354,7 +360,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
           />
         </div>
 
-        {/* Featured Venues Section Heading */}
+        {/* Section Heading */}
         <div style={{ marginBottom: '24px' }}>
           <h2 style={{ fontSize: '26px', fontWeight: '800', margin: '0 0 6px 0', color: '#1c1917' }}>
             {selectedRegion === 'All Regions' ? 'Featured Venues' : `${selectedRegion} Venues`}
