@@ -1,16 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 const REGIONS = [
   'All Regions',
   'Ottawa Valley',
-  'Muskoka',
   'Simcoe County',
-  'Huron County',
-  'Oxford County',
-  'Northumberland',
+  'Prince Edward County',
+  'Muskoka',
   'Kawarthas',
+  'Northumberland',
+  'Niagara',
   'Hamilton',
-  'Niagara'
+  'Oxford County',
+  'Huron County',
+  'Caledon',
+  'York Region'
 ];
 
 export default function VenueExplorer({ initialVenues = [] }) {
@@ -25,22 +28,22 @@ export default function VenueExplorer({ initialVenues = [] }) {
   const mapInstance = useRef(null);
   const markersGroup = useRef(null);
 
-  // If initialVenues was empty from SSR, fetch right away on client
+  // If initialVenues was empty from SSR, load directly via API on mount
   useEffect(() => {
-    async function fetchInitial() {
+    async function loadInitial() {
       try {
         const res = await fetch('/api/venues/search');
         const data = await res.json();
         if (data.venues && data.venues.length > 0) {
           setVenues(data.venues);
         }
-      } catch (e) {
-        console.error('Error fetching venues on client:', e);
+      } catch (err) {
+        console.error('Initial fetch failed:', err);
       }
     }
 
     if (!initialVenues || initialVenues.length === 0) {
-      fetchInitial();
+      loadInitial();
     }
   }, [initialVenues]);
 
@@ -141,7 +144,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
     setLoading(true);
 
     try {
-      // Case 1: Town is entered -> Geocode and search by radius + distance
+      // Case 1: Town entered -> geocode and do proximity search
       if (searchTerm.trim()) {
         setStatusMessage(`Locating "${searchTerm}"...`);
         const geoRes = await fetch(
@@ -167,7 +170,6 @@ export default function VenueExplorer({ initialVenues = [] }) {
         const data = await res.json();
         let results = data.venues || [];
 
-        // Apply region filter if one is selected as well
         if (regionToSearch !== 'All Regions') {
           const target = regionToSearch.trim().toLowerCase();
           results = results.filter((v) => {
@@ -179,7 +181,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
         setVenues(results);
         setStatusMessage(`Found ${results.length} venue(s) near ${placeName}.`);
       } 
-      // Case 2: Town is blank -> Search by Region directly via backend
+      // Case 2: Town blank -> search by region directly
       else {
         const queryParam = regionToSearch !== 'All Regions' ? `?region=${encodeURIComponent(regionToSearch)}` : '';
         const res = await fetch(`/api/venues/search${queryParam}`);
@@ -397,89 +399,99 @@ export default function VenueExplorer({ initialVenues = [] }) {
             gap: '28px',
           }}
         >
-          {venues.map((v) => (
-            <div
-              key={v.id || v.slug}
-              style={{
-                borderRadius: '16px',
-                border: '1px solid #e7e5e4',
-                backgroundColor: '#ffffff',
-                overflow: 'hidden',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div style={{ position: 'relative', height: '210px', backgroundColor: '#f5f5f4' }}>
-                <img
-                  src={
-                    v.image_url ||
-                    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'
-                  }
-                  alt={v.name}
-                  loading="lazy"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                {v.region && (
-                  <span
+          {venues.map((v) => {
+            const cardImg =
+              v.image_url ||
+              (Array.isArray(v.image_urls) && v.image_urls.length > 0 ? v.image_urls[0] : null) ||
+              'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80';
+
+            const capacityText = v.capacity_max
+              ? `Up to ${v.capacity_max} guests`
+              : v.capacity
+              ? `Up to ${v.capacity} guests`
+              : 'Capacity on request';
+
+            return (
+              <div
+                key={v.id || v.slug}
+                style={{
+                  borderRadius: '16px',
+                  border: '1px solid #e7e5e4',
+                  backgroundColor: '#ffffff',
+                  overflow: 'hidden',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{ position: 'relative', height: '210px', backgroundColor: '#f5f5f4' }}>
+                  <img
+                    src={cardImg}
+                    alt={v.name}
+                    loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  {v.region && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        left: '12px',
+                        backgroundColor: 'rgba(28,25,23,0.75)',
+                        backdropFilter: 'blur(4px)',
+                        color: '#ffffff',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                      }}
+                    >
+                      {v.region}
+                    </span>
+                  )}
+                </div>
+
+                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <h3 style={{ fontSize: '19px', fontWeight: '700', margin: '0 0 6px 0', color: '#1c1917' }}>
+                    {v.name}
+                  </h3>
+                  <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#78716c' }}>
+                    {v.city ? `${v.city}, ` : ''}
+                    {v.region || 'Ontario'}
+                  </p>
+
+                  {v.distance_km !== undefined && (
+                    <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: '700', color: '#047857' }}>
+                      {v.distance_km.toFixed(1)} km away
+                    </p>
+                  )}
+
+                  <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#57534e', flex: 1 }}>
+                    {v.description || 'Explore scenic indoor and outdoor celebration spaces.'}
+                  </p>
+
+                  <div
                     style={{
-                      position: 'absolute',
-                      top: '12px',
-                      left: '12px',
-                      backgroundColor: 'rgba(28,25,23,0.75)',
-                      backdropFilter: 'blur(4px)',
-                      color: '#ffffff',
-                      fontSize: '11px',
-                      fontWeight: '600',
-                      padding: '4px 10px',
-                      borderRadius: '20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      borderTop: '1px solid #f5f5f4',
+                      paddingTop: '12px',
+                      fontSize: '12px',
+                      color: '#78716c',
                     }}
                   >
-                    {v.region}
-                  </span>
-                )}
-              </div>
-
-              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '19px', fontWeight: '700', margin: '0 0 6px 0', color: '#1c1917' }}>
-                  {v.name}
-                </h3>
-                <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#78716c' }}>
-                  {v.city ? `${v.city}, ` : ''}
-                  {v.region || 'Ontario'}
-                </p>
-
-                {v.distance_km !== undefined && (
-                  <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: '700', color: '#047857' }}>
-                    {v.distance_km.toFixed(1)} km away
-                  </p>
-                )}
-
-                <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#57534e', flex: 1 }}>
-                  Explore scenic indoor and outdoor celebration spaces.
-                </p>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    borderTop: '1px solid #f5f5f4',
-                    paddingTop: '12px',
-                    fontSize: '12px',
-                    color: '#78716c',
-                  }}
-                >
-                  <span>{v.capacity ? `Up to ${v.capacity} guests` : 'Capacity on request'}</span>
-                  <a
-                    href={`/venues/${v.slug}`}
-                    style={{ color: '#78350f', fontWeight: '700', textDecoration: 'none' }}
-                  >
-                    View Details &rarr;
-                  </a>
+                    <span>{capacityText}</span>
+                    <a
+                      href={`/venues/${v.slug}`}
+                      style={{ color: '#78350f', fontWeight: '700', textDecoration: 'none' }}
+                    >
+                      View Details &rarr;
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
