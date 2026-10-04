@@ -44,7 +44,7 @@ export async function GET({ request, locals }) {
 
     const { data: venues, error } = await supabase
       .from('venues')
-      .select('id, name, slug, city, region, image_url, capacity, starting_price, latitude, longitude')
+      .select('*')
       .order('name', { ascending: true });
 
     if (error || !venues) {
