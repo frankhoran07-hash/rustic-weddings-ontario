@@ -30,7 +30,6 @@ export async function GET({ request, locals }) {
       return new Response(
         JSON.stringify({
           error: 'Supabase credentials missing',
-          debug: { hasUrl: !!supabaseUrl, hasKey: !!supabaseKey },
           venues: [],
         }),
         {
@@ -112,7 +111,7 @@ export async function GET({ request, locals }) {
     });
   } catch (err) {
     return new Response(
-      JSON.stringify({ error: err.message, stack: err.stack, venues: [] }),
+      JSON.stringify({ error: err.message, venues: [] }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
