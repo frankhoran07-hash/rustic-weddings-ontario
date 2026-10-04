@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const REGIONS = [
   'All Regions',
@@ -14,51 +14,37 @@ const REGIONS = [
 ];
 
 export default function VenueExplorer({ initialVenues = [] }) {
+  const [venues, setVenues] = useState(initialVenues);
   const [selectedRegion, setSelectedRegion] = useState('All Regions');
   const [searchTerm, setSearchTerm] = useState('');
   const [radius, setRadius] = useState(75);
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
-  const [allVenues, setAllVenues] = useState(initialVenues);
-  const [proximityVenues, setProximityVenues] = useState(null);
 
   const mapContainer = useRef(null);
   const mapInstance = useRef(null);
   const markersGroup = useRef(null);
 
-  // Load venues on mount via API if SSR passed an empty list
+  // If initialVenues was empty from SSR, fetch right away on client
   useEffect(() => {
-    async function loadAllVenues() {
+    async function fetchInitial() {
       try {
-        const res = await fetch('/api/venues/search?radius=2000');
+        const res = await fetch('/api/venues/search');
         const data = await res.json();
         if (data.venues && data.venues.length > 0) {
-          setAllVenues(data.venues);
+          setVenues(data.venues);
         }
-      } catch (err) {
-        console.error('Failed to load initial venues:', err);
+      } catch (e) {
+        console.error('Error fetching venues on client:', e);
       }
     }
 
-    if (allVenues.length === 0) {
-      loadAllVenues();
+    if (!initialVenues || initialVenues.length === 0) {
+      fetchInitial();
     }
-  }, []);
+  }, [initialVenues]);
 
-  // Filter venues by region or proximity
-  const displayedVenues = useMemo(() => {
-    let list = proximityVenues !== null ? proximityVenues : allVenues;
-    if (selectedRegion !== 'All Regions') {
-      const target = selectedRegion.trim().toLowerCase();
-      list = list.filter((v) => {
-        const r = (v.region || '').trim().toLowerCase();
-        return r === target || r.includes(target) || target.includes(r);
-      });
-    }
-    return list;
-  }, [proximityVenues, allVenues, selectedRegion]);
-
-  // Initialize Leaflet Map
+  // Leaflet Map Initialization
   useEffect(() => {
     let isMounted = true;
 
@@ -95,7 +81,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
         markersGroup.current = L.layerGroup().addTo(mapInstance.current);
       }
 
-      updateMap(L, displayedVenues);
+      updateMarkers(L, venues);
     }
 
     initMap();
@@ -105,16 +91,16 @@ export default function VenueExplorer({ initialVenues = [] }) {
     };
   }, []);
 
-  // Sync markers when displayed venues change
+  // Update map markers when venues change
   useEffect(() => {
     if (mapInstance.current) {
       import('leaflet').then((L) => {
-        updateMap(L, displayedVenues);
+        updateMarkers(L, venues);
       });
     }
-  }, [displayedVenues]);
+  }, [venues]);
 
-  const updateMap = (L, list) => {
+  const updateMarkers = (L, list) => {
     if (!mapInstance.current || !markersGroup.current) return;
     markersGroup.current.clearLayers();
 
@@ -149,54 +135,64 @@ export default function VenueExplorer({ initialVenues = [] }) {
     }, 200);
   };
 
-  // Search handler (town proximity or region filter)
-  const handleSearch = async (e) => {
-    if (e) e.preventDefault();
-
-    // If town/city is blank, filter all loaded venues by the selected region
-    if (!searchTerm.trim()) {
-      setProximityVenues(null);
-      if (selectedRegion === 'All Regions') {
-        setStatusMessage(`Showing all ${allVenues.length} venues.`);
-      } else {
-        const target = selectedRegion.trim().toLowerCase();
-        const count = allVenues.filter((v) => {
-          const r = (v.region || '').trim().toLowerCase();
-          return r === target || r.includes(target) || target.includes(r);
-        }).length;
-        setStatusMessage(`Showing ${count} venue(s) in ${selectedRegion}.`);
-      }
-      return;
-    }
-
+  // Perform search (handles city/town OR region only)
+  const performSearch = async (overrideRegion = null) => {
+    const regionToSearch = overrideRegion !== null ? overrideRegion : selectedRegion;
     setLoading(true);
-    setStatusMessage(`Locating "${searchTerm}"...`);
 
     try {
-      const geoRes = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          searchTerm + ', Ontario, Canada'
-        )}&format=json&limit=1`,
-        { headers: { 'Accept-Language': 'en' } }
-      );
-      const geoData = await geoRes.json();
+      // Case 1: Town is entered -> Geocode and search by radius + distance
+      if (searchTerm.trim()) {
+        setStatusMessage(`Locating "${searchTerm}"...`);
+        const geoRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+            searchTerm + ', Ontario, Canada'
+          )}&format=json&limit=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const geoData = await geoRes.json();
 
-      if (!geoData || geoData.length === 0) {
-        setStatusMessage(`Could not find "${searchTerm}" in Ontario.`);
-        setLoading(false);
-        return;
+        if (!geoData || geoData.length === 0) {
+          setStatusMessage(`Could not find "${searchTerm}" in Ontario.`);
+          setLoading(false);
+          return;
+        }
+
+        const userLat = parseFloat(geoData[0].lat);
+        const userLng = parseFloat(geoData[0].lon);
+        const placeName = geoData[0].display_name.split(',')[0];
+
+        setStatusMessage(`Searching within ${radius} km of ${placeName}...`);
+        const res = await fetch(`/api/venues/search?lat=${userLat}&lng=${userLng}&radius=${radius}`);
+        const data = await res.json();
+        let results = data.venues || [];
+
+        // Apply region filter if one is selected as well
+        if (regionToSearch !== 'All Regions') {
+          const target = regionToSearch.trim().toLowerCase();
+          results = results.filter((v) => {
+            const r = (v.region || '').trim().toLowerCase();
+            return r === target || r.includes(target) || target.includes(r);
+          });
+        }
+
+        setVenues(results);
+        setStatusMessage(`Found ${results.length} venue(s) near ${placeName}.`);
+      } 
+      // Case 2: Town is blank -> Search by Region directly via backend
+      else {
+        const queryParam = regionToSearch !== 'All Regions' ? `?region=${encodeURIComponent(regionToSearch)}` : '';
+        const res = await fetch(`/api/venues/search${queryParam}`);
+        const data = await res.json();
+        const results = data.venues || [];
+        setVenues(results);
+
+        if (regionToSearch === 'All Regions') {
+          setStatusMessage(`Showing all ${results.length} venues.`);
+        } else {
+          setStatusMessage(`Showing ${results.length} venue(s) in ${regionToSearch}.`);
+        }
       }
-
-      const userLat = parseFloat(geoData[0].lat);
-      const userLng = parseFloat(geoData[0].lon);
-      const placeName = geoData[0].display_name.split(',')[0];
-
-      setStatusMessage(`Searching within ${radius} km of ${placeName}...`);
-
-      const res = await fetch(`/api/venues/search?lat=${userLat}&lng=${userLng}&radius=${radius}`);
-      const data = await res.json();
-      setProximityVenues(data.venues || []);
-      setStatusMessage(`Found ${(data.venues || []).length} venue(s) near ${placeName}.`);
     } catch (err) {
       console.error(err);
       setStatusMessage('Error searching venues. Please try again.');
@@ -205,28 +201,29 @@ export default function VenueExplorer({ initialVenues = [] }) {
     }
   };
 
-  const handleRegionChange = (e) => {
-    const newRegion = e.target.value;
-    setSelectedRegion(newRegion);
-    setProximityVenues(null);
-
-    if (newRegion === 'All Regions') {
-      setStatusMessage(`Showing all venues.`);
-    } else {
-      const target = newRegion.trim().toLowerCase();
-      const count = allVenues.filter((v) => {
-        const r = (v.region || '').trim().toLowerCase();
-        return r === target || r.includes(target) || target.includes(r);
-      }).length;
-      setStatusMessage(`Showing ${count} venue(s) in ${newRegion}.`);
-    }
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    performSearch();
   };
 
-  const handleReset = () => {
+  const handleRegionSelect = (e) => {
+    const newRegion = e.target.value;
+    setSelectedRegion(newRegion);
+    performSearch(newRegion);
+  };
+
+  const handleReset = async () => {
     setSearchTerm('');
     setSelectedRegion('All Regions');
-    setProximityVenues(null);
     setStatusMessage('');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/venues/search');
+      const data = await res.json();
+      setVenues(data.venues || []);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -242,7 +239,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
 
         {/* Filter Controls Bar */}
         <form
-          onSubmit={handleSearch}
+          onSubmit={handleFormSubmit}
           style={{
             maxWidth: '860px',
             margin: '0 auto',
@@ -274,7 +271,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
 
           <select
             value={selectedRegion}
-            onChange={handleRegionChange}
+            onChange={handleRegionSelect}
             style={{
               flex: '1 1 150px',
               padding: '10px 14px',
@@ -332,7 +329,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
             {loading ? 'Searching...' : 'Search'}
           </button>
 
-          {(searchTerm || selectedRegion !== 'All Regions' || proximityVenues !== null) && (
+          {(searchTerm || selectedRegion !== 'All Regions') && (
             <button
               type="button"
               onClick={handleReset}
@@ -365,7 +362,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
         <div style={{ marginBottom: '36px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <span style={{ fontSize: '14px', fontWeight: '600', color: '#78716c' }}>
-              MAP OVERVIEW &bull; {displayedVenues.length} {displayedVenues.length === 1 ? 'VENUE' : 'VENUES'} PINNED
+              MAP OVERVIEW &bull; {venues.length} {venues.length === 1 ? 'VENUE' : 'VENUES'} PINNED
             </span>
           </div>
           <div
@@ -388,7 +385,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
             {selectedRegion === 'All Regions' ? 'Featured Venues' : `${selectedRegion} Venues`}
           </h2>
           <p style={{ margin: 0, fontSize: '14px', color: '#78716c' }}>
-            Showing {displayedVenues.length} rustic locations
+            Showing {venues.length} rustic locations
           </p>
         </div>
 
@@ -400,7 +397,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
             gap: '28px',
           }}
         >
-          {displayedVenues.map((v) => (
+          {venues.map((v) => (
             <div
               key={v.id || v.slug}
               style={{
