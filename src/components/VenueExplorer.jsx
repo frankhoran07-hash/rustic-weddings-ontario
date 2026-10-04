@@ -1,25 +1,46 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+
+const REGIONS = [
+  'All Regions',
+  'Ottawa Valley',
+  'Muskoka',
+  'Simcoe County',
+  'Huron County',
+  'Oxford County',
+  'Northumberland',
+  'Kawarthas',
+  'Hamilton',
+  'Niagara'
+];
 
 export default function VenueExplorer({ initialVenues = [] }) {
-  const [venues, setVenues] = useState(initialVenues);
+  const [selectedRegion, setSelectedRegion] = useState('All Regions');
   const [searchTerm, setSearchTerm] = useState('');
   const [radius, setRadius] = useState(75);
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
-  const [mapReady, setMapReady] = useState(false);
+  const [proximityVenues, setProximityVenues] = useState(null);
 
   const mapContainer = useRef(null);
   const mapInstance = useRef(null);
   const markersGroup = useRef(null);
 
-  // Initialize Map
+  // Active venue list filtered by proximity search OR region dropdown
+  const displayedVenues = useMemo(() => {
+    let list = proximityVenues !== null ? proximityVenues : initialVenues;
+    if (selectedRegion !== 'All Regions') {
+      list = list.filter((v) => (v.region || '').toLowerCase() === selectedRegion.toLowerCase());
+    }
+    return list;
+  }, [proximityVenues, initialVenues, selectedRegion]);
+
+  // Initialize Leaflet Map
   useEffect(() => {
     let isMounted = true;
 
-    async function init() {
+    async function initMap() {
       if (typeof window === 'undefined' || !mapContainer.current) return;
 
-      // Dynamically load Leaflet stylesheet if not already present
       if (!document.getElementById('leaflet-css')) {
         const link = document.createElement('link');
         link.id = 'leaflet-css';
@@ -30,7 +51,6 @@ export default function VenueExplorer({ initialVenues = [] }) {
 
       const L = await import('leaflet');
 
-      // Fix default Leaflet icon paths in Vite / React
       delete L.Icon.Default.prototype._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -41,7 +61,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
       if (!isMounted) return;
 
       if (!mapInstance.current) {
-        mapInstance.current = L.map(mapContainer.current).setView([44.5, -78.5], 7);
+        mapInstance.current = L.map(mapContainer.current).setView([44.5, -79.5], 7);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors',
@@ -49,50 +69,66 @@ export default function VenueExplorer({ initialVenues = [] }) {
         }).addTo(mapInstance.current);
 
         markersGroup.current = L.layerGroup().addTo(mapInstance.current);
-        setMapReady(true);
       }
 
-      drawPins(L, venues);
+      updateMap(L, displayedVenues);
     }
 
-    init();
+    initMap();
 
     return () => {
       isMounted = false;
     };
   }, []);
 
-  // Update Pins
-  const drawPins = (L, list) => {
+  // Sync pins and bounds whenever displayed venues change
+  useEffect(() => {
+    if (mapInstance.current) {
+      import('leaflet').then((L) => {
+        updateMap(L, displayedVenues);
+      });
+    }
+  }, [displayedVenues]);
+
+  const updateMap = (L, list) => {
     if (!mapInstance.current || !markersGroup.current) return;
     markersGroup.current.clearLayers();
 
+    const validPoints = [];
+
     list.forEach((v) => {
       if (v.latitude && v.longitude) {
+        validPoints.push([v.latitude, v.longitude]);
         const marker = L.marker([v.latitude, v.longitude]);
         marker.bindPopup(`
           <div style="font-family: sans-serif; font-size: 13px; line-height: 1.4;">
             <strong style="color: #1c1917; font-size: 14px;">${v.name}</strong><br/>
-            <span style="color: #78716c;">${v.city || v.region || 'Ontario'}</span><br/>
+            <span style="color: #78716c;">${v.city || ''}${v.region ? ', ' + v.region : ''}</span><br/>
             ${v.distance_km !== undefined ? `<span style="color: #047857; font-weight: 600;">${v.distance_km.toFixed(1)} km away</span><br/>` : ''}
-            <a href="/venues/${v.slug}" style="display: inline-block; margin-top: 6px; color: #78350f; font-weight: 700; text-decoration: underline;">View Venue &rarr;</a>
+            <a href="/venues/${v.slug}" style="display: inline-block; margin-top: 6px; color: #78350f; font-weight: 700; text-decoration: underline;">View Details &rarr;</a>
           </div>
         `);
         markersGroup.current.addLayer(marker);
       }
     });
 
+    if (validPoints.length > 0) {
+      mapInstance.current.fitBounds(validPoints, { padding: [40, 40], maxZoom: 10 });
+    }
+
     setTimeout(() => {
-      if (mapInstance.current) {
-        mapInstance.current.invalidateSize();
-      }
+      if (mapInstance.current) mapInstance.current.invalidateSize();
     }, 200);
   };
 
-  // Run Search
-  const handleSearch = async (e) => {
+  // Town proximity search handler
+  const handleTownSearch = async (e) => {
     e.preventDefault();
-    if (!searchTerm.trim()) return;
+    if (!searchTerm.trim()) {
+      setProximityVenues(null);
+      setStatusMessage('');
+      return;
+    }
 
     setLoading(true);
     setStatusMessage(`Locating "${searchTerm}"...`);
@@ -107,7 +143,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
       const geoData = await geoRes.json();
 
       if (!geoData || geoData.length === 0) {
-        setStatusMessage(`Could not find "${searchTerm}" in Ontario. Try another town.`);
+        setStatusMessage(`Could not find "${searchTerm}" in Ontario.`);
         setLoading(false);
         return;
       }
@@ -120,17 +156,8 @@ export default function VenueExplorer({ initialVenues = [] }) {
 
       const res = await fetch(`/api/venues/search?lat=${userLat}&lng=${userLng}&radius=${radius}`);
       const data = await res.json();
-      const results = data.venues || [];
-
-      setVenues(results);
-
-      if (mapInstance.current) {
-        mapInstance.current.setView([userLat, userLng], 9);
-        const L = await import('leaflet');
-        drawPins(L, results);
-      }
-
-      setStatusMessage(`Found ${results.length} venue${results.length === 1 ? '' : 's'} near ${placeName}.`);
+      setProximityVenues(data.venues || []);
+      setStatusMessage(`Found ${(data.venues || []).length} venue(s) near ${placeName}.`);
     } catch (err) {
       console.error(err);
       setStatusMessage('Error searching venues. Please try again.');
@@ -139,93 +166,249 @@ export default function VenueExplorer({ initialVenues = [] }) {
     }
   };
 
+  const handleRegionChange = (e) => {
+    setSelectedRegion(e.target.value);
+    setProximityVenues(null);
+    setSearchTerm('');
+    setStatusMessage('');
+  };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
-      {/* Search Input Controls */}
-      <form
-        onSubmit={handleSearch}
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '12px',
-          alignItems: 'center',
-          backgroundColor: '#f5f5f4',
-          padding: '16px',
-          borderRadius: '12px',
-          border: '1px solid #e7e5e4'
-        }}
-      >
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Enter an Ontario town (e.g. Almonte, Picton, Huntsville)"
-          style={{
-            flex: '1 1 240px',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            border: '1px solid #d6d3d1',
-            fontSize: '15px',
-            backgroundColor: '#ffffff'
-          }}
-        />
-
-        <select
-          value={radius}
-          onChange={(e) => setRadius(Number(e.target.value))}
-          style={{
-            padding: '12px 16px',
-            borderRadius: '8px',
-            border: '1px solid #d6d3d1',
-            backgroundColor: '#ffffff',
-            fontSize: '15px'
-          }}
-        >
-          <option value={25}>Within 25 km</option>
-          <option value={50}>Within 50 km</option>
-          <option value={75}>Within 75 km</option>
-          <option value={100}>Within 100 km</option>
-          <option value={200}>Within 200 km</option>
-        </select>
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: '12px 24px',
-            borderRadius: '8px',
-            backgroundColor: '#78350f',
-            color: '#ffffff',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            opacity: loading ? 0.7 : 1
-          }}
-        >
-          {loading ? 'Searching...' : 'Find Venues'}
-        </button>
-      </form>
-
-      {statusMessage && (
-        <p style={{ margin: '0', fontSize: '14px', color: '#44403c', fontWeight: '500' }}>
-          {statusMessage}
+    <div style={{ fontFamily: 'system-ui, -apple-system, sans-serif', color: '#1c1917' }}>
+      {/* Dark Hero Header */}
+      <div style={{ backgroundColor: '#1a1816', color: '#ffffff', padding: '48px 20px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '38px', fontWeight: '800', margin: '0 0 12px 0', letterSpacing: '-0.02em' }}>
+          Find Your Dream Rustic Venue in Ontario
+        </h1>
+        <p style={{ color: '#a8a29e', fontSize: '17px', margin: '0 auto 28px auto', maxWidth: '640px' }}>
+          Explore the finest barns, historic estates, greenhouses, and countryside settings.
         </p>
-      )}
 
-      {/* Map Viewport Container */}
-      <div
-        ref={mapContainer}
-        style={{
-          width: '100%',
-          height: '480px',
-          minHeight: '480px',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          border: '1px solid #e7e5e4',
-          backgroundColor: '#e5e7eb',
-          zIndex: 1
-        }}
-      />
+        {/* Filter Controls Bar */}
+        <form
+          onSubmit={handleTownSearch}
+          style={{
+            maxWidth: '860px',
+            margin: '0 auto',
+            backgroundColor: '#ffffff',
+            borderRadius: '14px',
+            padding: '12px 16px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            alignItems: 'center',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+          }}
+        >
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search town (e.g. Almonte, Picton, Muskoka)"
+            style={{
+              flex: '2 1 200px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              border: '1px solid #d6d3d1',
+              fontSize: '14px',
+              color: '#1c1917',
+              outline: 'none',
+            }}
+          />
+
+          <select
+            value={selectedRegion}
+            onChange={handleRegionChange}
+            style={{
+              flex: '1 1 150px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              border: '1px solid #d6d3d1',
+              fontSize: '14px',
+              backgroundColor: '#fff',
+              color: '#1c1917',
+              cursor: 'pointer',
+            }}
+          >
+            {REGIONS.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={radius}
+            onChange={(e) => setRadius(Number(e.target.value))}
+            style={{
+              flex: '1 1 120px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              border: '1px solid #d6d3d1',
+              fontSize: '14px',
+              backgroundColor: '#fff',
+              color: '#1c1917',
+              cursor: 'pointer',
+            }}
+          >
+            <option value={25}>Within 25 km</option>
+            <option value={50}>Within 50 km</option>
+            <option value={75}>Within 75 km</option>
+            <option value={100}>Within 100 km</option>
+            <option value={200}>Within 200 km</option>
+          </select>
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              padding: '10px 22px',
+              borderRadius: '8px',
+              backgroundColor: '#78350f',
+              color: '#ffffff',
+              fontWeight: '600',
+              fontSize: '14px',
+              border: 'none',
+              cursor: 'pointer',
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? 'Searching...' : 'Search'}
+          </button>
+        </form>
+
+        {statusMessage && (
+          <p style={{ marginTop: '16px', color: '#f59e0b', fontSize: '14px', fontWeight: '500' }}>
+            {statusMessage}
+          </p>
+        )}
+      </div>
+
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 20px' }}>
+        {/* Compact Map Preview */}
+        <div style={{ marginBottom: '36px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#78716c' }}>
+              MAP OVERVIEW &bull; {displayedVenues.length} {displayedVenues.length === 1 ? 'VENUE' : 'VENUES'} PINNED
+            </span>
+          </div>
+          <div
+            ref={mapContainer}
+            style={{
+              width: '100%',
+              height: '320px',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              border: '1px solid #e7e5e4',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+              backgroundColor: '#e5e7eb',
+            }}
+          />
+        </div>
+
+        {/* Featured Venues Section Heading */}
+        <div style={{ marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '26px', fontWeight: '800', margin: '0 0 6px 0', color: '#1c1917' }}>
+            {selectedRegion === 'All Regions' ? 'Featured Venues' : `${selectedRegion} Venues`}
+          </h2>
+          <p style={{ margin: 0, fontSize: '14px', color: '#78716c' }}>
+            Showing {displayedVenues.length} rustic locations
+          </p>
+        </div>
+
+        {/* Dynamic Venue Cards Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '28px',
+          }}
+        >
+          {displayedVenues.map((v) => (
+            <div
+              key={v.id || v.slug}
+              style={{
+                borderRadius: '16px',
+                border: '1px solid #e7e5e4',
+                backgroundColor: '#ffffff',
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{ position: 'relative', height: '210px', backgroundColor: '#f5f5f4' }}>
+                <img
+                  src={
+                    v.image_url ||
+                    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'
+                  }
+                  alt={v.name}
+                  loading="lazy"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                {v.region && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '12px',
+                      left: '12px',
+                      backgroundColor: 'rgba(28,25,23,0.75)',
+                      backdropFilter: 'blur(4px)',
+                      color: '#ffffff',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      padding: '4px 10px',
+                      borderRadius: '20px',
+                    }}
+                  >
+                    {v.region}
+                  </span>
+                )}
+              </div>
+
+              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <h3 style={{ fontSize: '19px', fontWeight: '700', margin: '0 0 6px 0', color: '#1c1917' }}>
+                  {v.name}
+                </h3>
+                <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#78716c' }}>
+                  {v.city ? `${v.city}, ` : ''}
+                  {v.region || 'Ontario'}
+                </p>
+
+                {v.distance_km !== undefined && (
+                  <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: '700', color: '#047857' }}>
+                    {v.distance_km.toFixed(1)} km away
+                  </p>
+                )}
+
+                <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#57534e', flex: 1 }}>
+                  Explore scenic indoor and outdoor celebration spaces.
+                </p>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid #f5f5f4',
+                    paddingTop: '12px',
+                    fontSize: '12px',
+                    color: '#78716c',
+                  }}
+                >
+                  <span>{v.capacity ? `Up to ${v.capacity} guests` : 'Capacity on request'}</span>
+                  <a
+                    href={`/venues/${v.slug}`}
+                    style={{ color: '#78350f', fontWeight: '700', textDecoration: 'none' }}
+                  >
+                    View Details &rarr;
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
