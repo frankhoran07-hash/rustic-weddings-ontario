@@ -1,33 +1,29 @@
-{
-  "name": "rustic-weddings-ontario",
-  "type": "module",
-  "version": "0.0.1",
-  "engines": {
-    "node": ">=22.12.0"
-  },
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build && node -e \"const fs=require('fs'); fs.cpSync('dist/server', 'dist/client/_server', {recursive:true}); fs.writeFileSync('dist/client/_worker.js', 'export { default } from \\'./_server/entry.mjs\\';\\n');\"",
-    "preview": "astro preview",
-    "astro": "astro",
-    "generate-types": "wrangler types"
-  },
-  "dependencies": {
-    "@astrojs/cloudflare": "^14.3.3",
-    "@astrojs/react": "^7.0.0",
-    "@supabase/supabase-js": "^2.117.2",
-    "@tailwindcss/vite": "^4.3.3",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "astro": "^7.3.5",
-    "lucide-react": "^1.48.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "resend": "^6.31.0",
-    "tailwindcss": "^4.3.3",
-    "wrangler": "^4.145.0"
-  },
-  "allowScripts": {
-    "esbuild": true
-  }
-}
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Production build outputs
+dist/
+dist/client/
+dist/server/
+
+# Environment variables
+.env
+.env.production
+.env.local
+.env.*.local
+
+# Astro & Wrangler tooling
+.astro/
+.wrangler/
+
+# System / Editor files
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vscode/
+.idea/
