@@ -1,35 +1,79 @@
-import { venueImage, venueLocation, venueName, venueSlug, venueType, type Venue } from '@/lib/venues'
+import React from 'react';
 
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'
+export interface Venue {
+  id: string;
+  name: string;
+  slug: string;
+  city?: string;
+  region?: string;
+  image_url?: string;
+  capacity?: number | string;
+  starting_price?: number | string;
+  distance_km?: number;
+}
 
-export function VenueCard({ venue }: { venue: Venue }) {
-  const name = venueName(venue)
-  const type = venueType(venue)
-  const location = venueLocation(venue)
-  const imageSrc = venueImage(venue) || FALLBACK_IMAGE
+interface VenueCardProps {
+  venue: Venue;
+}
+
+export default function VenueCard({ venue }: VenueCardProps) {
+  const fallbackImage =
+    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80';
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
-      <a href={`/venues/${encodeURIComponent(venueSlug(venue))}`} className="block">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+      <div className="relative h-56 w-full overflow-hidden bg-stone-100">
         <img
-          src={imageSrc}
-          alt={name}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = FALLBACK_IMAGE
-          }}
-          className="aspect-[4/3] w-full object-cover bg-stone-100"
+          src={venue.image_url || fallbackImage}
+          alt={venue.name}
+          loading="lazy"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
-        <div className="p-4">
-          {type && (
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">{type}</p>
-          )}
-          <h3 className="mt-2 font-serif text-2xl font-semibold text-foreground">{name}</h3>
-          {location && <p className="mt-1 text-sm text-muted-foreground">{location}</p>}
-          {venue.capacity != null && venue.capacity !== '' && (
-            <p className="mt-3 text-sm text-muted-foreground">Up to {String(venue.capacity)} guests</p>
+        {venue.region && (
+          <span className="absolute left-3 top-3 rounded-full bg-stone-900/70 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+            {venue.region}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="text-xl font-bold tracking-tight text-stone-900 transition group-hover:text-amber-900">
+          {venue.name}
+        </h3>
+
+        <p className="mt-1 text-sm font-medium text-stone-500">
+          {venue.city ? `${venue.city}, ` : ''}
+          {venue.region || 'Ontario'}
+        </p>
+
+        {venue.distance_km !== undefined && (
+          <p className="mt-2 text-xs font-semibold text-emerald-700">
+            {venue.distance_km.toFixed(1)} km away
+          </p>
+        )}
+
+        <p className="mt-2 text-sm text-stone-600">
+          Explore scenic rustic indoor and outdoor celebration spaces.
+        </p>
+
+        <div className="mt-4 flex items-center justify-between border-t border-stone-100 pt-4 text-xs text-stone-500">
+          <span>
+            {venue.capacity ? `Up to ${venue.capacity} guests` : 'Capacity on request'}
+          </span>
+          {venue.starting_price && (
+            <span className="font-semibold text-stone-800">
+              From ${venue.starting_price}
+            </span>
           )}
         </div>
-      </a>
-    </article>
-  )
+
+        <a
+          href={`/venues/${venue.slug}`}
+          className="mt-4 inline-flex items-center justify-center rounded-lg bg-amber-900/10 px-4 py-2 text-sm font-semibold text-amber-950 transition hover:bg-amber-900 hover:text-white"
+        >
+          View Details &rarr;
+        </a>
+      </div>
+    </div>
+  );
 }

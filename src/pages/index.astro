@@ -2,23 +2,23 @@
 export const prerender = false;
 
 import { createClient } from '@supabase/supabase-js';
+import VenueCard from '../components/venue-card';
 import VenueExplorer from '../components/VenueExplorer.jsx';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL;
-const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY;
 
-let initialVenues = [];
+let featuredVenues = [];
 
 if (supabaseUrl && supabaseKey) {
   const supabase = createClient(supabaseUrl, supabaseKey);
   const { data, error } = await supabase
     .from('venues')
-    .select('id, name, slug, city, region, latitude, longitude')
-    .order('name', { ascending: true })
-    .limit(50);
+    .select('id, name, slug, city, region, image_url, capacity, starting_price, latitude, longitude')
+    .order('name', { ascending: true });
 
   if (!error && data) {
-    initialVenues = data;
+    featuredVenues = data;
   }
 }
 ---
@@ -28,10 +28,10 @@ if (supabaseUrl && supabaseKey) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Find Rustic Wedding Venues Across Ontario | Rustic Weddings Ontario</title>
+    <title>Rustic Weddings Ontario | Barn, Farm & Country Venues</title>
     <meta
       name="description"
-      content="Browse rustic wedding venues, barn spaces, and farm estates across Ontario. Search by town or city to find venues near you."
+      content="Find the best rustic wedding venues across Ontario. Discover barns, historic estates, winery settings, and proximity-based search."
     />
     <link
       rel="stylesheet"
@@ -40,39 +40,75 @@ if (supabaseUrl && supabaseKey) {
       crossorigin=""
     />
   </head>
-  <body style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #fafaf9; color: #1c1917; margin: 0; padding: 0;">
-    <header style="background-color: #ffffff; border-bottom: 1px solid #e7e5e4; padding: 16px 24px;">
-      <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-        <a href="/" style="font-size: 20px; font-weight: 700; color: #78350f; text-decoration: none;">
-          Rustic Weddings Ontario
+  <body class="min-h-screen bg-stone-50 text-stone-900 font-sans antialiased">
+    <!-- Navigation -->
+    <header class="border-b border-stone-200 bg-white/90 backdrop-blur sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold tracking-tight text-amber-950 hover:text-amber-900 transition">
+          🌿 Rustic Weddings Ontario
         </a>
-        <nav style="display: flex; gap: 20px;">
-          <a href="/" style="color: #44403c; text-decoration: none; font-size: 15px;">Home</a>
-          <a href="/venues" style="color: #78350f; font-weight: 600; text-decoration: none; font-size: 15px;">Venues</a>
+        <nav class="flex items-center gap-6 text-sm font-medium text-stone-600">
+          <a href="#search" class="hover:text-amber-950 transition">Find Near Me</a>
+          <a href="#featured" class="hover:text-amber-950 transition">Featured Venues</a>
+          <a href="/contact" class="hover:text-amber-950 transition">Contact</a>
         </nav>
       </div>
     </header>
 
-    <main style="max-width: 1200px; margin: 0 auto; padding: 40px 20px 80px 20px;">
-      <div style="margin-bottom: 32px;">
-        <h1 style="font-size: 32px; font-weight: 800; color: #292524; margin: 0 0 10px 0;">
-          Explore Rustic Wedding Venues in Ontario
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+      <!-- Hero Section -->
+      <section class="text-center py-12 sm:py-16 bg-gradient-to-b from-amber-100/50 to-transparent rounded-3xl p-8 border border-amber-200/40">
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-stone-900 max-w-3xl mx-auto leading-tight">
+          Discover Ontario's Most Charming Rustic Wedding Venues
         </h1>
-        <p style="font-size: 16px; color: #57534e; margin: 0; max-width: 720px; line-height: 1.5;">
-          Search by town or city to find barn venues, country estates, and waterfront properties near you. Pan the interactive map to browse locations across the province.
+        <p class="mt-4 text-lg text-stone-600 max-w-2xl mx-auto">
+          From historic timber-frame barns in the Ottawa Valley to vineyard estates in Niagara and lakeside retreats in Muskoka.
         </p>
-      </div>
+      </section>
 
-      <!-- Interactive React Search + Leaflet Map Component -->
-      <VenueExplorer client:only="react" initialVenues={initialVenues} />
+      <!-- Proximity Search & Map Explorer Section -->
+      <section id="search" class="scroll-mt-20">
+        <div class="mb-6">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900">
+            Interactive Venue Map & Proximity Search
+          </h2>
+          <p class="text-stone-600 mt-1">
+            Enter your town or city to calculate driving distances and view nearby venues on the map.
+          </p>
+        </div>
+        <div class="bg-white p-4 sm:p-6 rounded-2xl border border-stone-200 shadow-sm">
+          <VenueExplorer client:only="react" initialVenues={featuredVenues} />
+        </div>
+      </section>
+
+      <!-- Featured Directory Cards Grid -->
+      <section id="featured" class="scroll-mt-20">
+        <div class="mb-6">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900">
+            Featured Venues
+          </h2>
+          <p class="text-stone-600 mt-1">
+            Showing {featuredVenues.length} rustic locations across Ontario.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featuredVenues.map((venue) => (
+            <VenueCard key={venue.id || venue.slug} venue={venue} />
+          ))}
+        </div>
+      </section>
     </main>
 
-    <footer style="background-color: #292524; color: #d6d3d1; padding: 40px 20px; text-align: center; font-size: 14px; margin-top: 40px;">
-      <p style="margin: 0 0 8px 0;">&copy; {new Date().getFullYear()} Rustic Weddings Ontario. All rights reserved.</p>
-      <div style="display: flex; justify-content: center; gap: 16px;">
-        <a href="/privacy-policy" style="color: #a8a29e; text-decoration: none;">Privacy Policy</a>
-        <a href="/terms" style="color: #a8a29e; text-decoration: none;">Terms of Service</a>
-        <a href="/contact" style="color: #a8a29e; text-decoration: none;">Contact Us</a>
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 mt-20 border-t border-stone-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row justify-between items-center gap-6 text-sm">
+        <p>© {new Date().getFullYear()} Rustic Weddings Ontario. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="/privacy-policy" class="hover:text-white transition">Privacy Policy</a>
+          <a href="/terms" class="hover:text-white transition">Terms of Service</a>
+          <a href="/contact" class="hover:text-white transition">Contact Us</a>
+        </div>
       </div>
     </footer>
   </body>
