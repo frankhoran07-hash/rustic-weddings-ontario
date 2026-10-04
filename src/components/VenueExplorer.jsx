@@ -1,31 +1,53 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 
+const REGIONS = [
+  'All Regions',
+  'Ottawa Valley',
+  'Muskoka',
+  'Simcoe County',
+  'Huron County',
+  'Oxford County',
+  'Northumberland',
+  'Kawarthas',
+  'Hamilton',
+  'Niagara'
+];
+
 export default function VenueExplorer({ initialVenues = [] }) {
   const [selectedRegion, setSelectedRegion] = useState('All Regions');
   const [searchTerm, setSearchTerm] = useState('');
   const [radius, setRadius] = useState(75);
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
+  const [allVenues, setAllVenues] = useState(initialVenues);
   const [proximityVenues, setProximityVenues] = useState(null);
 
   const mapContainer = useRef(null);
   const mapInstance = useRef(null);
   const markersGroup = useRef(null);
 
-  // Dynamically extract unique regions that actually exist in your database
-  const availableRegions = useMemo(() => {
-    const set = new Set();
-    initialVenues.forEach((v) => {
-      if (v.region && typeof v.region === 'string' && v.region.trim()) {
-        set.add(v.region.trim());
+  // Load venues on mount via API if SSR passed an empty list
+  useEffect(() => {
+    async function loadAllVenues() {
+      try {
+        const res = await fetch('/api/venues/search?radius=2000');
+        const data = await res.json();
+        if (data.venues && data.venues.length > 0) {
+          setAllVenues(data.venues);
+        }
+      } catch (err) {
+        console.error('Failed to load initial venues:', err);
       }
-    });
-    return ['All Regions', ...Array.from(set).sort()];
-  }, [initialVenues]);
+    }
 
-  // Active venue list filtered by proximity search OR region dropdown
+    if (allVenues.length === 0) {
+      loadAllVenues();
+    }
+  }, []);
+
+  // Filter venues by region or proximity
   const displayedVenues = useMemo(() => {
-    let list = proximityVenues !== null ? proximityVenues : initialVenues;
+    let list = proximityVenues !== null ? proximityVenues : allVenues;
     if (selectedRegion !== 'All Regions') {
       const target = selectedRegion.trim().toLowerCase();
       list = list.filter((v) => {
@@ -34,7 +56,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
       });
     }
     return list;
-  }, [proximityVenues, initialVenues, selectedRegion]);
+  }, [proximityVenues, allVenues, selectedRegion]);
 
   // Initialize Leaflet Map
   useEffect(() => {
@@ -83,7 +105,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
     };
   }, []);
 
-  // Sync pins and bounds whenever displayed venues change
+  // Sync markers when displayed venues change
   useEffect(() => {
     if (mapInstance.current) {
       import('leaflet').then((L) => {
@@ -127,18 +149,18 @@ export default function VenueExplorer({ initialVenues = [] }) {
     }, 200);
   };
 
-  // Search handler (works with town proximity OR region-only search)
+  // Search handler (town proximity or region filter)
   const handleSearch = async (e) => {
     if (e) e.preventDefault();
 
-    // If town/city is blank, just filter by region
+    // If town/city is blank, filter all loaded venues by the selected region
     if (!searchTerm.trim()) {
       setProximityVenues(null);
       if (selectedRegion === 'All Regions') {
-        setStatusMessage(`Showing all ${initialVenues.length} venues.`);
+        setStatusMessage(`Showing all ${allVenues.length} venues.`);
       } else {
         const target = selectedRegion.trim().toLowerCase();
-        const count = initialVenues.filter((v) => {
+        const count = allVenues.filter((v) => {
           const r = (v.region || '').trim().toLowerCase();
           return r === target || r.includes(target) || target.includes(r);
         }).length;
@@ -186,13 +208,13 @@ export default function VenueExplorer({ initialVenues = [] }) {
   const handleRegionChange = (e) => {
     const newRegion = e.target.value;
     setSelectedRegion(newRegion);
-    setProximityVenues(null); // Clear distance restriction to show all venues in that region
-    
+    setProximityVenues(null);
+
     if (newRegion === 'All Regions') {
       setStatusMessage(`Showing all venues.`);
     } else {
       const target = newRegion.trim().toLowerCase();
-      const count = initialVenues.filter((v) => {
+      const count = allVenues.filter((v) => {
         const r = (v.region || '').trim().toLowerCase();
         return r === target || r.includes(target) || target.includes(r);
       }).length;
@@ -264,7 +286,7 @@ export default function VenueExplorer({ initialVenues = [] }) {
               cursor: 'pointer',
             }}
           >
-            {availableRegions.map((r) => (
+            {REGIONS.map((r) => (
               <option key={r} value={r}>
                 {r}
               </option>
