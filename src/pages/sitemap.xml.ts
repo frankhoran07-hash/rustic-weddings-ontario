@@ -1,17 +1,21 @@
 import type { APIRoute } from 'astro';
 import { createClient } from '@supabase/supabase-js';
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ locals }) => {
   const env = (locals as any)?.runtime?.env || {};
+  
   const supabaseUrl =
-    import.meta.env.PUBLIC_SUPABASE_URL ||
+    (typeof process !== 'undefined' && process.env?.PUBLIC_SUPABASE_URL) ||
+    import.meta.env?.PUBLIC_SUPABASE_URL ||
     env.PUBLIC_SUPABASE_URL ||
-    process?.env?.PUBLIC_SUPABASE_URL ||
     '';
+
   const supabaseKey =
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
+    (typeof process !== 'undefined' && process.env?.PUBLIC_SUPABASE_ANON_KEY) ||
+    import.meta.env?.PUBLIC_SUPABASE_ANON_KEY ||
     env.PUBLIC_SUPABASE_ANON_KEY ||
-    process?.env?.PUBLIC_SUPABASE_ANON_KEY ||
     '';
 
   const baseUrl = 'https://rusticweddingsontario.ca';
@@ -21,33 +25,37 @@ export const GET: APIRoute = async ({ locals }) => {
     try {
       const supabase = createClient(supabaseUrl, supabaseKey);
       const { data: venues } = await supabase.from('venues').select('slug');
-      if (venues) {
+      if (venues && Array.isArray(venues)) {
         venues.forEach((v) => {
-          if (v.slug) urls.push(`${baseUrl}/venues/${v.slug}`);
+          if (v?.slug) {
+            urls.push(`${baseUrl}/venues/${v.slug}`);
+          }
         });
       }
-    } catch (e) {
-      // Continue with homepage if db query fails
+    } catch {
+      // Continue serving base sitemap if query fails
     }
   }
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls
-  .map(
-    (url) => `  <url>
+  const xmlEntries = urls
+    .map(
+      (url) => `  <url>
     <loc>${url}</loc>
     <changefreq>weekly</changefreq>
     <priority>${url === baseUrl ? '1.0' : '0.8'}</priority>
   </url>`
-  )
-  .join('\n')}
+    )
+    .join('\n');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${xmlEntries}
 </urlset>`;
 
   return new Response(xml, {
     status: 200,
     headers: {
-      'Content-Type': 'application/xml',
+      'Content-Type': 'application/xml; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',
     },
   });
